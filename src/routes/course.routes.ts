@@ -99,6 +99,40 @@ router.get("/purchased", VerifyUser, async(req: AuthenticatedRequest, res) => {
     return res.json(purchases);
 });
 
+router.delete("/:id",VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, res)=>{
+    const courseId=parseInt(req.params.id as string);
+    if(isNaN(courseId)){
+        return res.status(400).json({
+            error: "The course id is not valid!"
+        })
+    }
+    const course=await prisma.course.findUnique({
+        where:{
+            id:courseId
+        }
+    })
+    if(!course){
+        return res.status(404).json({
+            error:"Course could not be fetched!"
+        })
+    }
+
+    if(course?.authorId!==req.user?.userId){
+        return res.status(403).json({
+            error:"You are not authorized to access this course!"
+        })
+    }
+    await prisma.course.delete({
+        where:{
+            id:courseId
+        }
+    })
+    return res.json({
+        message: "Course deleted successfully!"
+    })
+
+})
+
 router.get("/:id", async(req, res) => {
     
     const courseId = parseInt(req.params.id);
