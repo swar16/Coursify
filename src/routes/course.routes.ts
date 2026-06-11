@@ -27,6 +27,49 @@ router.post("/", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, re
     return res.status(201).json(course);
 });
 
+router.post("/my-courses", VerifyUser,InstructorOnly, async(req: AuthenticatedRequest, res) => {
+    const courses = await prisma.course.findMany({
+        where: {
+            authorId: req.user!.userId
+        }
+    });
+    return res.json(courses);
+});
+
+router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, res) => {
+    
+    const courseId = parseInt(req.params.id as string);
+    if(isNaN(courseId)){
+        return res.status(400).json({ error: "Invalid course ID" });
+    }
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    })
+    if(!course){
+        return res.status(404).json({ error: "Course not found" });
+    }
+    if(course.authorId !== req.user!.userId){
+        return res.status(403).json({ error: "You are not the author of this course" });
+    }
+    const { title, description, price } = req.body;
+    if(!title || !description || price===undefined){
+        return res.status(400).json({ error: "Title, description, and price are required" });
+    }
+    const updatedCourse = await prisma.course.update({
+        where: {
+            id: courseId
+        },
+        data: {
+            title,
+            description,
+            price
+        }
+    })
+    return res.json(updatedCourse);
+});
+
 router.get("/", async(req, res) => {
     
     const courses = await prisma.course.findMany({
@@ -43,6 +86,19 @@ router.get("/", async(req, res) => {
     return res.json(courses);
 
 });
+
+router.get("/purchased", VerifyUser, async(req: AuthenticatedRequest, res) => {
+    const purchases=await prisma.purchase.findMany({
+        where: {
+            userId: req.user!.userId
+        },
+        include: {
+            course: true
+        }
+    })
+    return res.json(purchases);
+});
+
 router.get("/:id", async(req, res) => {
     
     const courseId = parseInt(req.params.id);
@@ -68,6 +124,8 @@ router.get("/:id", async(req, res) => {
     }
     return res.json(course);
 });
+
+
 
 router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) => {
     
