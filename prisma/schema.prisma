@@ -1,0 +1,66 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role{
+  STUDENT
+  INSTRUCTOR
+}
+model User{
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String
+  role Role
+
+
+  // courses authored by instructor
+  authoredCourses Course[]
+
+  // courses purchased by user
+  purchases Purchase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course{
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  price Float
+
+  // author of the course
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  // users who purchased the course
+  purchases Purchase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Purchase{
+  id Int @id @default(autoincrement())
+  
+  // user who made the purchase
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  // course that was purchased
+  course Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  createdAt DateTime @default(now())
+
+  // to prevent duplicate purchases, we can add a unique constraint on userId and courseId
+  @@unique([userId, courseId])
+}
+
+
