@@ -3,25 +3,32 @@ import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 const router = Router();
+import {SignupSchema} from "../schemas/auth.schema"
+import { LoginSchema } from "../schemas/auth.schema";
 
 router.post("/signup", async(req, res) => {
-
-    const { email, password, role } = req.body;
-    if(!email || !password || !role){
-        return res.status(400).json({ error: "Email, password and role are required" });
+    const result=SignupSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(400).json({
+            errors: result.error.issues
+        });
     }
+    const data = result.data;
+    
     const alreadyExists=await prisma.user.findUnique({
-        where: { email }
+        where: {
+            email: data.email
+        }
     })
     if(alreadyExists){
         return res.status(400).json({ error: "User with this email already exists" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     const user = await prisma.user.create({
         data: {
-            email,
+            email: data.email,
             password: hashedPassword,
-            role
+            role:data.role
         }
     })
     return res.status(201).json({
@@ -34,19 +41,22 @@ router.post("/signup", async(req, res) => {
 
 router.post("/login", async(req, res) => {
 
-    const { email, password } = req.body;
-    if(!email || !password){
-        return res.status(400).json({ error: "Email and password are required" });
+    const result=LoginSchema.safeParse(req.body);
+    if (!result.success) {
+        return res.status(400).json({
+            errors: result.error.issues
+        });
     }
+    const data = result.data;
     const user=await prisma.user.findUnique({
         where:{
-            email
+            email:data.email
         }
     })
     if(!user){
         return res.status(400).json({ error: "Invalid email or password" });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if(!isPasswordValid){
         return res.status(400).json({ error: "Invalid email or password" });
     }

@@ -2,7 +2,7 @@ import { Request, Router } from "express";
 const router=Router();
 import prisma from "../lib/prisma";
 import {VerifyUser, InstructorOnly } from "../middleware/auth";
-
+import { CourseSchema } from "../schemas/course.schema";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -12,22 +12,25 @@ type AuthenticatedRequest = Request & {
 
 router.post("/", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, res) => {
     
-    const { title, description,price } = req.body;
-    if(!title || !description || price===undefined){
-        return res.status(400).json({ error: "Title, description, and price are required" });
+    const result =CourseSchema.safeParse(req.body)
+    if (!result.success) {
+        return res.status(400).json({
+            errors: result.error.issues
+        });
     }
+    const data = result.data;
     const course = await prisma.course.create({
         data: {
-            title,
-            description,
+            title:data.title,
+            description:data.description,
             authorId: req.user!.userId,
-            price
+            price:data.price
         }
     })
     return res.status(201).json(course);
 });
 
-router.post("/my-courses", VerifyUser,InstructorOnly, async(req: AuthenticatedRequest, res) => {
+router.get("/my-courses", VerifyUser,InstructorOnly, async(req: AuthenticatedRequest, res) => {
     const courses = await prisma.course.findMany({
         where: {
             authorId: req.user!.userId
@@ -53,19 +56,18 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
     if(course.authorId !== req.user!.userId){
         return res.status(403).json({ error: "You are not the author of this course" });
     }
-    const { title, description, price } = req.body;
-    if(!title || !description || price===undefined){
-        return res.status(400).json({ error: "Title, description, and price are required" });
+    const result=CourseSchema.safeParse(req.body);
+    if(!result.success){
+        return res.status(400).json({
+            errors: result.error.issues
+        });
     }
+    const data=result.data;
     const updatedCourse = await prisma.course.update({
         where: {
             id: courseId
         },
-        data: {
-            title,
-            description,
-            price
-        }
+        data
     })
     return res.json(updatedCourse);
 });
@@ -117,7 +119,7 @@ router.delete("/:id",VerifyUser, InstructorOnly, async(req: AuthenticatedRequest
         })
     }
 
-    if(course?.authorId!==req.user?.userId){
+    if(course.authorId!==req.user?.userId){
         return res.status(403).json({
             error:"You are not authorized to access this course!"
         })
@@ -164,13 +166,6 @@ router.get("/:id", async(req, res) => {
 router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) => {
     
     const id = req.params.id;
-
-    if (!id) {
-        return res.status(400).json({
-            error: "Course ID missing"
-        });
-    }
-
     const courseId = parseInt(id as string);
     const course=await prisma.course.findUnique({
         where: {
