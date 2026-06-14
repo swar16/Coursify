@@ -3,6 +3,7 @@ const router=Router();
 import prisma from "../lib/prisma";
 import {VerifyUser, InstructorOnly } from "../middleware/auth";
 import { CourseSchema } from "../schemas/course.schema";
+import { PrismaClient } from "../generated/prisma/client";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -74,6 +75,29 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
 
 router.get("/", async(req, res) => {
     const whereClause: any ={};
+    const sort= req.query.sort as string;
+    let orderBy={};
+    switch(sort){
+        case "price_asc":
+            orderBy={
+                price:"asc"
+            };
+            break;
+        case "price_desc":
+            orderBy={
+                price:"desc"
+            };
+            break;
+        case "latest":
+            orderBy={
+                createdAt:"desc"
+            };
+            break;
+        default:
+            orderBy:{
+                createdAt:"desc"
+            };
+    }
     const minPrice = Number(req.query.minPrice);
     const maxPrice = Number(req.query.maxPrice);
     if (!isNaN(minPrice) || !isNaN(maxPrice)) {
@@ -110,6 +134,7 @@ router.get("/", async(req, res) => {
 
     const courses = await prisma.course.findMany({
         where: whereClause,
+        orderBy,
         skip: (page - 1) * limit,
         take: limit,
         include: {
