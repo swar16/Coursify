@@ -73,8 +73,17 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
 });
 
 router.get("/", async(req, res) => {
-    
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.min(
+        100,
+        Math.max(1, Number(req.query.limit) || 10)
+    );
+    const totalCourses = await prisma.course.count();
+    const totalPages = Math.ceil(totalCourses / limit);
+
     const courses = await prisma.course.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
         include: {
             author: {
                 select: {
@@ -85,7 +94,13 @@ router.get("/", async(req, res) => {
             }
         }
     });
-    return res.json(courses);
+    return res.json({
+        page,
+        limit,
+        totalCourses,
+        totalPages,
+        courses
+    });
 
 });
 
