@@ -73,15 +73,43 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
 });
 
 router.get("/", async(req, res) => {
+    const whereClause: any ={};
+    const minPrice = Number(req.query.minPrice);
+    const maxPrice = Number(req.query.maxPrice);
+    if (!isNaN(minPrice) || !isNaN(maxPrice)) {
+        whereClause.price = {};
+    }
+    if(!isNaN(minPrice)){
+        whereClause.price.gte=minPrice;
+    }
+    if(!isNaN(maxPrice)){
+        whereClause.price.lte=maxPrice;
+    }
+
+
+    const search=req.query.search as string;
+    if (search) {
+
+        whereClause.title = {
+
+            contains: search,
+
+            mode: "insensitive"
+
+        }
+    }
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(
         100,
         Math.max(1, Number(req.query.limit) || 10)
     );
-    const totalCourses = await prisma.course.count();
+    const totalCourses = await prisma.course.count({
+        where:whereClause
+    });
     const totalPages = Math.ceil(totalCourses / limit);
 
     const courses = await prisma.course.findMany({
+        where: whereClause,
         skip: (page - 1) * limit,
         take: limit,
         include: {
