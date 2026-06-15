@@ -5954,6 +5954,8 @@ export namespace Prisma {
     title: string | null
     content: string | null
     sectionId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type LectureMaxAggregateOutputType = {
@@ -5961,6 +5963,8 @@ export namespace Prisma {
     title: string | null
     content: string | null
     sectionId: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type LectureCountAggregateOutputType = {
@@ -5968,6 +5972,8 @@ export namespace Prisma {
     title: number
     content: number
     sectionId: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -5987,6 +5993,8 @@ export namespace Prisma {
     title?: true
     content?: true
     sectionId?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type LectureMaxAggregateInputType = {
@@ -5994,6 +6002,8 @@ export namespace Prisma {
     title?: true
     content?: true
     sectionId?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type LectureCountAggregateInputType = {
@@ -6001,6 +6011,8 @@ export namespace Prisma {
     title?: true
     content?: true
     sectionId?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -6095,6 +6107,8 @@ export namespace Prisma {
     title: string
     content: string | null
     sectionId: number
+    createdAt: Date
+    updatedAt: Date
     _count: LectureCountAggregateOutputType | null
     _avg: LectureAvgAggregateOutputType | null
     _sum: LectureSumAggregateOutputType | null
@@ -6121,6 +6135,8 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     sectionId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     section?: boolean | SectionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lecture"]>
 
@@ -6129,6 +6145,8 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     sectionId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     section?: boolean | SectionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lecture"]>
 
@@ -6137,6 +6155,8 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     sectionId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     section?: boolean | SectionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lecture"]>
 
@@ -6145,9 +6165,11 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     sectionId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type LectureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "sectionId", ExtArgs["result"]["lecture"]>
+  export type LectureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "sectionId" | "createdAt" | "updatedAt", ExtArgs["result"]["lecture"]>
   export type LectureInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     section?: boolean | SectionDefaultArgs<ExtArgs>
   }
@@ -6168,6 +6190,8 @@ export namespace Prisma {
       title: string
       content: string | null
       sectionId: number
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["lecture"]>
     composites: {}
   }
@@ -6596,6 +6620,8 @@ export namespace Prisma {
     readonly title: FieldRef<"Lecture", 'String'>
     readonly content: FieldRef<"Lecture", 'String'>
     readonly sectionId: FieldRef<"Lecture", 'Int'>
+    readonly createdAt: FieldRef<"Lecture", 'DateTime'>
+    readonly updatedAt: FieldRef<"Lecture", 'DateTime'>
   }
     
 
@@ -7079,7 +7105,9 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     content: 'content',
-    sectionId: 'sectionId'
+    sectionId: 'sectionId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type LectureScalarFieldEnum = (typeof LectureScalarFieldEnum)[keyof typeof LectureScalarFieldEnum]
@@ -7449,6 +7477,8 @@ export namespace Prisma {
     title?: StringFilter<"Lecture"> | string
     content?: StringNullableFilter<"Lecture"> | string | null
     sectionId?: IntFilter<"Lecture"> | number
+    createdAt?: DateTimeFilter<"Lecture"> | Date | string
+    updatedAt?: DateTimeFilter<"Lecture"> | Date | string
     section?: XOR<SectionScalarRelationFilter, SectionWhereInput>
   }
 
@@ -7457,6 +7487,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrderInput | SortOrder
     sectionId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     section?: SectionOrderByWithRelationInput
   }
 
@@ -7468,6 +7500,8 @@ export namespace Prisma {
     title?: StringFilter<"Lecture"> | string
     content?: StringNullableFilter<"Lecture"> | string | null
     sectionId?: IntFilter<"Lecture"> | number
+    createdAt?: DateTimeFilter<"Lecture"> | Date | string
+    updatedAt?: DateTimeFilter<"Lecture"> | Date | string
     section?: XOR<SectionScalarRelationFilter, SectionWhereInput>
   }, "id">
 
@@ -7476,6 +7510,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrderInput | SortOrder
     sectionId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: LectureCountOrderByAggregateInput
     _avg?: LectureAvgOrderByAggregateInput
     _max?: LectureMaxOrderByAggregateInput
@@ -7491,6 +7527,8 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Lecture"> | string
     content?: StringNullableWithAggregatesFilter<"Lecture"> | string | null
     sectionId?: IntWithAggregatesFilter<"Lecture"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Lecture"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Lecture"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -7738,6 +7776,8 @@ export namespace Prisma {
   export type LectureCreateInput = {
     title: string
     content?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     section: SectionCreateNestedOneWithoutLecturesInput
   }
 
@@ -7746,11 +7786,15 @@ export namespace Prisma {
     title: string
     content?: string | null
     sectionId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type LectureUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     section?: SectionUpdateOneRequiredWithoutLecturesNestedInput
   }
 
@@ -7759,6 +7803,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     sectionId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LectureCreateManyInput = {
@@ -7766,11 +7812,15 @@ export namespace Prisma {
     title: string
     content?: string | null
     sectionId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type LectureUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LectureUncheckedUpdateManyInput = {
@@ -7778,6 +7828,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     sectionId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -8138,6 +8190,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     sectionId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type LectureAvgOrderByAggregateInput = {
@@ -8150,6 +8204,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     sectionId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type LectureMinOrderByAggregateInput = {
@@ -8157,6 +8213,8 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     sectionId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type LectureSumOrderByAggregateInput = {
@@ -9054,12 +9112,16 @@ export namespace Prisma {
   export type LectureCreateWithoutSectionInput = {
     title: string
     content?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type LectureUncheckedCreateWithoutSectionInput = {
     id?: number
     title: string
     content?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type LectureCreateOrConnectWithoutSectionInput = {
@@ -9128,6 +9190,8 @@ export namespace Prisma {
     title?: StringFilter<"Lecture"> | string
     content?: StringNullableFilter<"Lecture"> | string | null
     sectionId?: IntFilter<"Lecture"> | number
+    createdAt?: DateTimeFilter<"Lecture"> | Date | string
+    updatedAt?: DateTimeFilter<"Lecture"> | Date | string
   }
 
   export type SectionCreateWithoutLecturesInput = {
@@ -9294,23 +9358,31 @@ export namespace Prisma {
     id?: number
     title: string
     content?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type LectureUpdateWithoutSectionInput = {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LectureUncheckedUpdateWithoutSectionInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LectureUncheckedUpdateManyWithoutSectionInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

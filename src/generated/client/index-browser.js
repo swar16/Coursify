@@ -158,7 +158,9 @@ exports.Prisma.LectureScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  sectionId: 'sectionId'
+  sectionId: 'sectionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {

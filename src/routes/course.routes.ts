@@ -291,4 +291,5 @@ router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: Authenticate
     })
     return res.status(201).json(section);
 });
+
 export default router;

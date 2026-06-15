@@ -90,5 +90,8 @@ model Lecture{
   // section to which the lecture belongs
   section Section @relation(fields: [sectionId], references: [id])
   sectionId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
 }
 
