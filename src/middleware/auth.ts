@@ -38,4 +38,11 @@ function InstructorOnly(req: AuthenticatedRequest, res: Response, next: NextFunc
     next();
 }
 
-export { VerifyUser, InstructorOnly };
+function StudentOnly(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    if (req.user?.role !== "STUDENT") {
+        return res.status(403).json({ error: "Access denied" });
+    }
+    next();
+}
+
+export { VerifyUser, InstructorOnly, StudentOnly };
