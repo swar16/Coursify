@@ -3,7 +3,6 @@ const router=Router();
 import prisma from "../lib/prisma";
 import {VerifyUser, InstructorOnly } from "../middleware/auth";
 import { CourseSchema } from "../schemas/course.schema";
-import { PrismaClient } from "../generated/prisma/client";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -94,7 +93,7 @@ router.get("/", async(req, res) => {
             };
             break;
         default:
-            orderBy:{
+            orderBy={
                 createdAt:"desc"
             };
     }
@@ -263,4 +262,33 @@ router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) =
     return res.json({ message: "Course purchased successfully" });
 });
 
+
+router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, res) => {
+    const courseId = parseInt(req.params.id as string);
+    if(isNaN(courseId)){
+        return res.status(400).json({ error: "Invalid course ID" });
+    }
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    })
+    if(!course){
+        return res.status(404).json({ error: "Course not found" });
+    }
+    if(course.authorId !== req.user!.userId){
+        return res.status(403).json({ error: "You are not the author of this course" });
+    }
+    const { title } = req.body;
+    if(!title){
+        return res.status(400).json({ error: "Title is required" });
+    }
+    const section = await prisma.section.create({
+        data: {
+            title,
+            courseId
+        }
+    })
+    return res.status(201).json(section);
+});
 export default router;

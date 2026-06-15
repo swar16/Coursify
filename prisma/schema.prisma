@@ -2,6 +2,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/client"
 }
 
 datasource db {
@@ -42,6 +43,9 @@ model Course{
   // users who purchased the course
   purchases Purchase[]
 
+  // sections of the course
+  sections Section[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -63,4 +67,28 @@ model Purchase{
   @@unique([userId, courseId])
 }
 
+model Section{
+  id Int @id @default(autoincrement())
+  title String
+
+  // course to which the section belongs
+  course Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  lectures Lecture[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Lecture{
+  id Int @id @default(autoincrement())
+  title String
+  content String?
+
+  // section to which the lecture belongs
+  section Section @relation(fields: [sectionId], references: [id])
+  sectionId Int
+}
 
