@@ -216,8 +216,19 @@ router.get("/:id", async(req, res) => {
             author:{
                 select: {
                     id: true,
-                    email: true,
                     role: true
+                }
+            },
+            sections: {
+                include: {
+                    lectures: {
+                        select: {
+                            id: true,
+                            title: true                        },
+                        orderBy: {
+                            createdAt: 'asc'
+                        }
+                    }
                 }
             }
         }
