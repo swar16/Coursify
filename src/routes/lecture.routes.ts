@@ -125,8 +125,12 @@ router.delete("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedReques
     return res.json({ message: "Lecture deleted successfully" });
 });
 
-router.post("/:id/completed", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
+router.patch("/:id/progress", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
     const userId = req.user!.userId;
+    const completed=req.body.completed;
+    if(typeof completed !== "boolean"){
+        return res.status(400).json({ error: "Completed must be a boolean" });
+    }
     const lectureId = parseInt(req.params.id as string);
     if(isNaN(lectureId)){
         return res.status(400).json({ error: "Invalid lecture ID" });
@@ -166,16 +170,18 @@ router.post("/:id/completed", VerifyUser, StudentOnly, async(req: AuthenticatedR
             }
         },
         update: {
-            completed: true,
-            completedAt: new Date()
+            completed: completed,
+            completedAt: completed ? new Date() : null
         },
         create: {
             userId,
             lectureId,
-            completed: true,
-            completedAt: new Date()
+            completed,
+            completedAt: completed ? new Date() : null
         }
     })
-    return res.json({ message: "Lecture marked as completed" });
+    return res.json({
+        message: completed? "Lecture marked as completed": "Lecture marked as incomplete"
+    });
 });
 export default router;
