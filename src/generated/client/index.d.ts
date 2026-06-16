@@ -38,6 +38,11 @@ export type Section = $Result.DefaultSelection<Prisma.$SectionPayload>
  * 
  */
 export type Lecture = $Result.DefaultSelection<Prisma.$LecturePayload>
+/**
+ * Model LectureProgress
+ * 
+ */
+export type LectureProgress = $Result.DefaultSelection<Prisma.$LectureProgressPayload>
 
 /**
  * Enums
@@ -226,6 +231,16 @@ export class PrismaClient<
     * ```
     */
   get lecture(): Prisma.LectureDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.lectureProgress`: Exposes CRUD operations for the **LectureProgress** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LectureProgresses
+    * const lectureProgresses = await prisma.lectureProgress.findMany()
+    * ```
+    */
+  get lectureProgress(): Prisma.LectureProgressDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -664,7 +679,8 @@ export namespace Prisma {
     Course: 'Course',
     Purchase: 'Purchase',
     Section: 'Section',
-    Lecture: 'Lecture'
+    Lecture: 'Lecture',
+    LectureProgress: 'LectureProgress'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -680,7 +696,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "course" | "purchase" | "section" | "lecture"
+      modelProps: "user" | "course" | "purchase" | "section" | "lecture" | "lectureProgress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1054,6 +1070,80 @@ export namespace Prisma {
           }
         }
       }
+      LectureProgress: {
+        payload: Prisma.$LectureProgressPayload<ExtArgs>
+        fields: Prisma.LectureProgressFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LectureProgressFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LectureProgressFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>
+          }
+          findFirst: {
+            args: Prisma.LectureProgressFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LectureProgressFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>
+          }
+          findMany: {
+            args: Prisma.LectureProgressFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>[]
+          }
+          create: {
+            args: Prisma.LectureProgressCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>
+          }
+          createMany: {
+            args: Prisma.LectureProgressCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LectureProgressCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>[]
+          }
+          delete: {
+            args: Prisma.LectureProgressDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>
+          }
+          update: {
+            args: Prisma.LectureProgressUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>
+          }
+          deleteMany: {
+            args: Prisma.LectureProgressDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LectureProgressUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LectureProgressUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>[]
+          }
+          upsert: {
+            args: Prisma.LectureProgressUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LectureProgressPayload>
+          }
+          aggregate: {
+            args: Prisma.LectureProgressAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLectureProgress>
+          }
+          groupBy: {
+            args: Prisma.LectureProgressGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LectureProgressGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LectureProgressCountArgs<ExtArgs>
+            result: $Utils.Optional<LectureProgressCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1167,6 +1257,7 @@ export namespace Prisma {
     purchase?: PurchaseOmit
     section?: SectionOmit
     lecture?: LectureOmit
+    lectureProgress?: LectureProgressOmit
   }
 
   /* Types for Logging */
@@ -1249,11 +1340,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     authoredCourses: number
     purchases: number
+    lectureProgress: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     authoredCourses?: boolean | UserCountOutputTypeCountAuthoredCoursesArgs
     purchases?: boolean | UserCountOutputTypeCountPurchasesArgs
+    lectureProgress?: boolean | UserCountOutputTypeCountLectureProgressArgs
   }
 
   // Custom InputTypes
@@ -1279,6 +1372,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPurchasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PurchaseWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountLectureProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LectureProgressWhereInput
   }
 
 
@@ -1350,6 +1450,37 @@ export namespace Prisma {
    */
   export type SectionCountOutputTypeCountLecturesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: LectureWhereInput
+  }
+
+
+  /**
+   * Count Type LectureCountOutputType
+   */
+
+  export type LectureCountOutputType = {
+    lectureProgress: number
+  }
+
+  export type LectureCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lectureProgress?: boolean | LectureCountOutputTypeCountLectureProgressArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LectureCountOutputType without action
+   */
+  export type LectureCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureCountOutputType
+     */
+    select?: LectureCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LectureCountOutputType without action
+   */
+  export type LectureCountOutputTypeCountLectureProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LectureProgressWhereInput
   }
 
 
@@ -1565,6 +1696,7 @@ export namespace Prisma {
     updatedAt?: boolean
     authoredCourses?: boolean | User$authoredCoursesArgs<ExtArgs>
     purchases?: boolean | User$purchasesArgs<ExtArgs>
+    lectureProgress?: boolean | User$lectureProgressArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1599,6 +1731,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     authoredCourses?: boolean | User$authoredCoursesArgs<ExtArgs>
     purchases?: boolean | User$purchasesArgs<ExtArgs>
+    lectureProgress?: boolean | User$lectureProgressArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1609,6 +1742,7 @@ export namespace Prisma {
     objects: {
       authoredCourses: Prisma.$CoursePayload<ExtArgs>[]
       purchases: Prisma.$PurchasePayload<ExtArgs>[]
+      lectureProgress: Prisma.$LectureProgressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2013,6 +2147,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     authoredCourses<T extends User$authoredCoursesArgs<ExtArgs> = {}>(args?: Subset<T, User$authoredCoursesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     purchases<T extends User$purchasesArgs<ExtArgs> = {}>(args?: Subset<T, User$purchasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    lectureProgress<T extends User$lectureProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$lectureProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2486,6 +2621,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PurchaseScalarFieldEnum | PurchaseScalarFieldEnum[]
+  }
+
+  /**
+   * User.lectureProgress
+   */
+  export type User$lectureProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    where?: LectureProgressWhereInput
+    orderBy?: LectureProgressOrderByWithRelationInput | LectureProgressOrderByWithRelationInput[]
+    cursor?: LectureProgressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LectureProgressScalarFieldEnum | LectureProgressScalarFieldEnum[]
   }
 
   /**
@@ -6105,7 +6264,7 @@ export namespace Prisma {
   export type LectureGroupByOutputType = {
     id: number
     title: string
-    content: string | null
+    content: string
     sectionId: number
     createdAt: Date
     updatedAt: Date
@@ -6138,6 +6297,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     section?: boolean | SectionDefaultArgs<ExtArgs>
+    lectureProgress?: boolean | Lecture$lectureProgressArgs<ExtArgs>
+    _count?: boolean | LectureCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lecture"]>
 
   export type LectureSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6172,6 +6333,8 @@ export namespace Prisma {
   export type LectureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "sectionId" | "createdAt" | "updatedAt", ExtArgs["result"]["lecture"]>
   export type LectureInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     section?: boolean | SectionDefaultArgs<ExtArgs>
+    lectureProgress?: boolean | Lecture$lectureProgressArgs<ExtArgs>
+    _count?: boolean | LectureCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LectureIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     section?: boolean | SectionDefaultArgs<ExtArgs>
@@ -6184,11 +6347,12 @@ export namespace Prisma {
     name: "Lecture"
     objects: {
       section: Prisma.$SectionPayload<ExtArgs>
+      lectureProgress: Prisma.$LectureProgressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       title: string
-      content: string | null
+      content: string
       sectionId: number
       createdAt: Date
       updatedAt: Date
@@ -6587,6 +6751,7 @@ export namespace Prisma {
   export interface Prisma__LectureClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     section<T extends SectionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SectionDefaultArgs<ExtArgs>>): Prisma__SectionClient<$Result.GetResult<Prisma.$SectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    lectureProgress<T extends Lecture$lectureProgressArgs<ExtArgs> = {}>(args?: Subset<T, Lecture$lectureProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7023,6 +7188,30 @@ export namespace Prisma {
   }
 
   /**
+   * Lecture.lectureProgress
+   */
+  export type Lecture$lectureProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    where?: LectureProgressWhereInput
+    orderBy?: LectureProgressOrderByWithRelationInput | LectureProgressOrderByWithRelationInput[]
+    cursor?: LectureProgressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LectureProgressScalarFieldEnum | LectureProgressScalarFieldEnum[]
+  }
+
+  /**
    * Lecture without action
    */
   export type LectureDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7038,6 +7227,1145 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: LectureInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LectureProgress
+   */
+
+  export type AggregateLectureProgress = {
+    _count: LectureProgressCountAggregateOutputType | null
+    _avg: LectureProgressAvgAggregateOutputType | null
+    _sum: LectureProgressSumAggregateOutputType | null
+    _min: LectureProgressMinAggregateOutputType | null
+    _max: LectureProgressMaxAggregateOutputType | null
+  }
+
+  export type LectureProgressAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    lectureId: number | null
+  }
+
+  export type LectureProgressSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    lectureId: number | null
+  }
+
+  export type LectureProgressMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    lectureId: number | null
+    completed: boolean | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LectureProgressMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    lectureId: number | null
+    completed: boolean | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LectureProgressCountAggregateOutputType = {
+    id: number
+    userId: number
+    lectureId: number
+    completed: number
+    completedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type LectureProgressAvgAggregateInputType = {
+    id?: true
+    userId?: true
+    lectureId?: true
+  }
+
+  export type LectureProgressSumAggregateInputType = {
+    id?: true
+    userId?: true
+    lectureId?: true
+  }
+
+  export type LectureProgressMinAggregateInputType = {
+    id?: true
+    userId?: true
+    lectureId?: true
+    completed?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LectureProgressMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    lectureId?: true
+    completed?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LectureProgressCountAggregateInputType = {
+    id?: true
+    userId?: true
+    lectureId?: true
+    completed?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type LectureProgressAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LectureProgress to aggregate.
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LectureProgresses to fetch.
+     */
+    orderBy?: LectureProgressOrderByWithRelationInput | LectureProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LectureProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LectureProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LectureProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LectureProgresses
+    **/
+    _count?: true | LectureProgressCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LectureProgressAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LectureProgressSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LectureProgressMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LectureProgressMaxAggregateInputType
+  }
+
+  export type GetLectureProgressAggregateType<T extends LectureProgressAggregateArgs> = {
+        [P in keyof T & keyof AggregateLectureProgress]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLectureProgress[P]>
+      : GetScalarType<T[P], AggregateLectureProgress[P]>
+  }
+
+
+
+
+  export type LectureProgressGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LectureProgressWhereInput
+    orderBy?: LectureProgressOrderByWithAggregationInput | LectureProgressOrderByWithAggregationInput[]
+    by: LectureProgressScalarFieldEnum[] | LectureProgressScalarFieldEnum
+    having?: LectureProgressScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LectureProgressCountAggregateInputType | true
+    _avg?: LectureProgressAvgAggregateInputType
+    _sum?: LectureProgressSumAggregateInputType
+    _min?: LectureProgressMinAggregateInputType
+    _max?: LectureProgressMaxAggregateInputType
+  }
+
+  export type LectureProgressGroupByOutputType = {
+    id: number
+    userId: number
+    lectureId: number
+    completed: boolean
+    completedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: LectureProgressCountAggregateOutputType | null
+    _avg: LectureProgressAvgAggregateOutputType | null
+    _sum: LectureProgressSumAggregateOutputType | null
+    _min: LectureProgressMinAggregateOutputType | null
+    _max: LectureProgressMaxAggregateOutputType | null
+  }
+
+  type GetLectureProgressGroupByPayload<T extends LectureProgressGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LectureProgressGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LectureProgressGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LectureProgressGroupByOutputType[P]>
+            : GetScalarType<T[P], LectureProgressGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LectureProgressSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    lectureId?: boolean
+    completed?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    lecture?: boolean | LectureDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["lectureProgress"]>
+
+  export type LectureProgressSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    lectureId?: boolean
+    completed?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    lecture?: boolean | LectureDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["lectureProgress"]>
+
+  export type LectureProgressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    lectureId?: boolean
+    completed?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    lecture?: boolean | LectureDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["lectureProgress"]>
+
+  export type LectureProgressSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    lectureId?: boolean
+    completed?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type LectureProgressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "lectureId" | "completed" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["lectureProgress"]>
+  export type LectureProgressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    lecture?: boolean | LectureDefaultArgs<ExtArgs>
+  }
+  export type LectureProgressIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    lecture?: boolean | LectureDefaultArgs<ExtArgs>
+  }
+  export type LectureProgressIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    lecture?: boolean | LectureDefaultArgs<ExtArgs>
+  }
+
+  export type $LectureProgressPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LectureProgress"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      lecture: Prisma.$LecturePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      lectureId: number
+      completed: boolean
+      completedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["lectureProgress"]>
+    composites: {}
+  }
+
+  type LectureProgressGetPayload<S extends boolean | null | undefined | LectureProgressDefaultArgs> = $Result.GetResult<Prisma.$LectureProgressPayload, S>
+
+  type LectureProgressCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LectureProgressFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LectureProgressCountAggregateInputType | true
+    }
+
+  export interface LectureProgressDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LectureProgress'], meta: { name: 'LectureProgress' } }
+    /**
+     * Find zero or one LectureProgress that matches the filter.
+     * @param {LectureProgressFindUniqueArgs} args - Arguments to find a LectureProgress
+     * @example
+     * // Get one LectureProgress
+     * const lectureProgress = await prisma.lectureProgress.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LectureProgressFindUniqueArgs>(args: SelectSubset<T, LectureProgressFindUniqueArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LectureProgress that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LectureProgressFindUniqueOrThrowArgs} args - Arguments to find a LectureProgress
+     * @example
+     * // Get one LectureProgress
+     * const lectureProgress = await prisma.lectureProgress.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LectureProgressFindUniqueOrThrowArgs>(args: SelectSubset<T, LectureProgressFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LectureProgress that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressFindFirstArgs} args - Arguments to find a LectureProgress
+     * @example
+     * // Get one LectureProgress
+     * const lectureProgress = await prisma.lectureProgress.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LectureProgressFindFirstArgs>(args?: SelectSubset<T, LectureProgressFindFirstArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LectureProgress that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressFindFirstOrThrowArgs} args - Arguments to find a LectureProgress
+     * @example
+     * // Get one LectureProgress
+     * const lectureProgress = await prisma.lectureProgress.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LectureProgressFindFirstOrThrowArgs>(args?: SelectSubset<T, LectureProgressFindFirstOrThrowArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LectureProgresses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LectureProgresses
+     * const lectureProgresses = await prisma.lectureProgress.findMany()
+     * 
+     * // Get first 10 LectureProgresses
+     * const lectureProgresses = await prisma.lectureProgress.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const lectureProgressWithIdOnly = await prisma.lectureProgress.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LectureProgressFindManyArgs>(args?: SelectSubset<T, LectureProgressFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LectureProgress.
+     * @param {LectureProgressCreateArgs} args - Arguments to create a LectureProgress.
+     * @example
+     * // Create one LectureProgress
+     * const LectureProgress = await prisma.lectureProgress.create({
+     *   data: {
+     *     // ... data to create a LectureProgress
+     *   }
+     * })
+     * 
+     */
+    create<T extends LectureProgressCreateArgs>(args: SelectSubset<T, LectureProgressCreateArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LectureProgresses.
+     * @param {LectureProgressCreateManyArgs} args - Arguments to create many LectureProgresses.
+     * @example
+     * // Create many LectureProgresses
+     * const lectureProgress = await prisma.lectureProgress.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LectureProgressCreateManyArgs>(args?: SelectSubset<T, LectureProgressCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LectureProgresses and returns the data saved in the database.
+     * @param {LectureProgressCreateManyAndReturnArgs} args - Arguments to create many LectureProgresses.
+     * @example
+     * // Create many LectureProgresses
+     * const lectureProgress = await prisma.lectureProgress.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LectureProgresses and only return the `id`
+     * const lectureProgressWithIdOnly = await prisma.lectureProgress.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LectureProgressCreateManyAndReturnArgs>(args?: SelectSubset<T, LectureProgressCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LectureProgress.
+     * @param {LectureProgressDeleteArgs} args - Arguments to delete one LectureProgress.
+     * @example
+     * // Delete one LectureProgress
+     * const LectureProgress = await prisma.lectureProgress.delete({
+     *   where: {
+     *     // ... filter to delete one LectureProgress
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LectureProgressDeleteArgs>(args: SelectSubset<T, LectureProgressDeleteArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LectureProgress.
+     * @param {LectureProgressUpdateArgs} args - Arguments to update one LectureProgress.
+     * @example
+     * // Update one LectureProgress
+     * const lectureProgress = await prisma.lectureProgress.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LectureProgressUpdateArgs>(args: SelectSubset<T, LectureProgressUpdateArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LectureProgresses.
+     * @param {LectureProgressDeleteManyArgs} args - Arguments to filter LectureProgresses to delete.
+     * @example
+     * // Delete a few LectureProgresses
+     * const { count } = await prisma.lectureProgress.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LectureProgressDeleteManyArgs>(args?: SelectSubset<T, LectureProgressDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LectureProgresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LectureProgresses
+     * const lectureProgress = await prisma.lectureProgress.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LectureProgressUpdateManyArgs>(args: SelectSubset<T, LectureProgressUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LectureProgresses and returns the data updated in the database.
+     * @param {LectureProgressUpdateManyAndReturnArgs} args - Arguments to update many LectureProgresses.
+     * @example
+     * // Update many LectureProgresses
+     * const lectureProgress = await prisma.lectureProgress.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LectureProgresses and only return the `id`
+     * const lectureProgressWithIdOnly = await prisma.lectureProgress.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LectureProgressUpdateManyAndReturnArgs>(args: SelectSubset<T, LectureProgressUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LectureProgress.
+     * @param {LectureProgressUpsertArgs} args - Arguments to update or create a LectureProgress.
+     * @example
+     * // Update or create a LectureProgress
+     * const lectureProgress = await prisma.lectureProgress.upsert({
+     *   create: {
+     *     // ... data to create a LectureProgress
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LectureProgress we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LectureProgressUpsertArgs>(args: SelectSubset<T, LectureProgressUpsertArgs<ExtArgs>>): Prisma__LectureProgressClient<$Result.GetResult<Prisma.$LectureProgressPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LectureProgresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressCountArgs} args - Arguments to filter LectureProgresses to count.
+     * @example
+     * // Count the number of LectureProgresses
+     * const count = await prisma.lectureProgress.count({
+     *   where: {
+     *     // ... the filter for the LectureProgresses we want to count
+     *   }
+     * })
+    **/
+    count<T extends LectureProgressCountArgs>(
+      args?: Subset<T, LectureProgressCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LectureProgressCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LectureProgress.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LectureProgressAggregateArgs>(args: Subset<T, LectureProgressAggregateArgs>): Prisma.PrismaPromise<GetLectureProgressAggregateType<T>>
+
+    /**
+     * Group by LectureProgress.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LectureProgressGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LectureProgressGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LectureProgressGroupByArgs['orderBy'] }
+        : { orderBy?: LectureProgressGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LectureProgressGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLectureProgressGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LectureProgress model
+   */
+  readonly fields: LectureProgressFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LectureProgress.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LectureProgressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    lecture<T extends LectureDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LectureDefaultArgs<ExtArgs>>): Prisma__LectureClient<$Result.GetResult<Prisma.$LecturePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LectureProgress model
+   */
+  interface LectureProgressFieldRefs {
+    readonly id: FieldRef<"LectureProgress", 'Int'>
+    readonly userId: FieldRef<"LectureProgress", 'Int'>
+    readonly lectureId: FieldRef<"LectureProgress", 'Int'>
+    readonly completed: FieldRef<"LectureProgress", 'Boolean'>
+    readonly completedAt: FieldRef<"LectureProgress", 'DateTime'>
+    readonly createdAt: FieldRef<"LectureProgress", 'DateTime'>
+    readonly updatedAt: FieldRef<"LectureProgress", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LectureProgress findUnique
+   */
+  export type LectureProgressFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which LectureProgress to fetch.
+     */
+    where: LectureProgressWhereUniqueInput
+  }
+
+  /**
+   * LectureProgress findUniqueOrThrow
+   */
+  export type LectureProgressFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which LectureProgress to fetch.
+     */
+    where: LectureProgressWhereUniqueInput
+  }
+
+  /**
+   * LectureProgress findFirst
+   */
+  export type LectureProgressFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which LectureProgress to fetch.
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LectureProgresses to fetch.
+     */
+    orderBy?: LectureProgressOrderByWithRelationInput | LectureProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LectureProgresses.
+     */
+    cursor?: LectureProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LectureProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LectureProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LectureProgresses.
+     */
+    distinct?: LectureProgressScalarFieldEnum | LectureProgressScalarFieldEnum[]
+  }
+
+  /**
+   * LectureProgress findFirstOrThrow
+   */
+  export type LectureProgressFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which LectureProgress to fetch.
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LectureProgresses to fetch.
+     */
+    orderBy?: LectureProgressOrderByWithRelationInput | LectureProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LectureProgresses.
+     */
+    cursor?: LectureProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LectureProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LectureProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LectureProgresses.
+     */
+    distinct?: LectureProgressScalarFieldEnum | LectureProgressScalarFieldEnum[]
+  }
+
+  /**
+   * LectureProgress findMany
+   */
+  export type LectureProgressFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which LectureProgresses to fetch.
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LectureProgresses to fetch.
+     */
+    orderBy?: LectureProgressOrderByWithRelationInput | LectureProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LectureProgresses.
+     */
+    cursor?: LectureProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LectureProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LectureProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LectureProgresses.
+     */
+    distinct?: LectureProgressScalarFieldEnum | LectureProgressScalarFieldEnum[]
+  }
+
+  /**
+   * LectureProgress create
+   */
+  export type LectureProgressCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LectureProgress.
+     */
+    data: XOR<LectureProgressCreateInput, LectureProgressUncheckedCreateInput>
+  }
+
+  /**
+   * LectureProgress createMany
+   */
+  export type LectureProgressCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LectureProgresses.
+     */
+    data: LectureProgressCreateManyInput | LectureProgressCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LectureProgress createManyAndReturn
+   */
+  export type LectureProgressCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * The data used to create many LectureProgresses.
+     */
+    data: LectureProgressCreateManyInput | LectureProgressCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LectureProgress update
+   */
+  export type LectureProgressUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LectureProgress.
+     */
+    data: XOR<LectureProgressUpdateInput, LectureProgressUncheckedUpdateInput>
+    /**
+     * Choose, which LectureProgress to update.
+     */
+    where: LectureProgressWhereUniqueInput
+  }
+
+  /**
+   * LectureProgress updateMany
+   */
+  export type LectureProgressUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LectureProgresses.
+     */
+    data: XOR<LectureProgressUpdateManyMutationInput, LectureProgressUncheckedUpdateManyInput>
+    /**
+     * Filter which LectureProgresses to update
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * Limit how many LectureProgresses to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LectureProgress updateManyAndReturn
+   */
+  export type LectureProgressUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * The data used to update LectureProgresses.
+     */
+    data: XOR<LectureProgressUpdateManyMutationInput, LectureProgressUncheckedUpdateManyInput>
+    /**
+     * Filter which LectureProgresses to update
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * Limit how many LectureProgresses to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LectureProgress upsert
+   */
+  export type LectureProgressUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LectureProgress to update in case it exists.
+     */
+    where: LectureProgressWhereUniqueInput
+    /**
+     * In case the LectureProgress found by the `where` argument doesn't exist, create a new LectureProgress with this data.
+     */
+    create: XOR<LectureProgressCreateInput, LectureProgressUncheckedCreateInput>
+    /**
+     * In case the LectureProgress was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LectureProgressUpdateInput, LectureProgressUncheckedUpdateInput>
+  }
+
+  /**
+   * LectureProgress delete
+   */
+  export type LectureProgressDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
+    /**
+     * Filter which LectureProgress to delete.
+     */
+    where: LectureProgressWhereUniqueInput
+  }
+
+  /**
+   * LectureProgress deleteMany
+   */
+  export type LectureProgressDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LectureProgresses to delete
+     */
+    where?: LectureProgressWhereInput
+    /**
+     * Limit how many LectureProgresses to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LectureProgress without action
+   */
+  export type LectureProgressDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LectureProgress
+     */
+    select?: LectureProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LectureProgress
+     */
+    omit?: LectureProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LectureProgressInclude<ExtArgs> | null
   }
 
 
@@ -7111,6 +8439,19 @@ export namespace Prisma {
   };
 
   export type LectureScalarFieldEnum = (typeof LectureScalarFieldEnum)[keyof typeof LectureScalarFieldEnum]
+
+
+  export const LectureProgressScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    lectureId: 'lectureId',
+    completed: 'completed',
+    completedAt: 'completedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type LectureProgressScalarFieldEnum = (typeof LectureProgressScalarFieldEnum)[keyof typeof LectureProgressScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7210,6 +8551,13 @@ export namespace Prisma {
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
   /**
    * Deep Input Types
    */
@@ -7227,6 +8575,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     authoredCourses?: CourseListRelationFilter
     purchases?: PurchaseListRelationFilter
+    lectureProgress?: LectureProgressListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7238,6 +8587,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     authoredCourses?: CourseOrderByRelationAggregateInput
     purchases?: PurchaseOrderByRelationAggregateInput
+    lectureProgress?: LectureProgressOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7252,6 +8602,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     authoredCourses?: CourseListRelationFilter
     purchases?: PurchaseListRelationFilter
+    lectureProgress?: LectureProgressListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -7475,21 +8826,23 @@ export namespace Prisma {
     NOT?: LectureWhereInput | LectureWhereInput[]
     id?: IntFilter<"Lecture"> | number
     title?: StringFilter<"Lecture"> | string
-    content?: StringNullableFilter<"Lecture"> | string | null
+    content?: StringFilter<"Lecture"> | string
     sectionId?: IntFilter<"Lecture"> | number
     createdAt?: DateTimeFilter<"Lecture"> | Date | string
     updatedAt?: DateTimeFilter<"Lecture"> | Date | string
     section?: XOR<SectionScalarRelationFilter, SectionWhereInput>
+    lectureProgress?: LectureProgressListRelationFilter
   }
 
   export type LectureOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
-    content?: SortOrderInput | SortOrder
+    content?: SortOrder
     sectionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     section?: SectionOrderByWithRelationInput
+    lectureProgress?: LectureProgressOrderByRelationAggregateInput
   }
 
   export type LectureWhereUniqueInput = Prisma.AtLeast<{
@@ -7498,17 +8851,18 @@ export namespace Prisma {
     OR?: LectureWhereInput[]
     NOT?: LectureWhereInput | LectureWhereInput[]
     title?: StringFilter<"Lecture"> | string
-    content?: StringNullableFilter<"Lecture"> | string | null
+    content?: StringFilter<"Lecture"> | string
     sectionId?: IntFilter<"Lecture"> | number
     createdAt?: DateTimeFilter<"Lecture"> | Date | string
     updatedAt?: DateTimeFilter<"Lecture"> | Date | string
     section?: XOR<SectionScalarRelationFilter, SectionWhereInput>
+    lectureProgress?: LectureProgressListRelationFilter
   }, "id">
 
   export type LectureOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
-    content?: SortOrderInput | SortOrder
+    content?: SortOrder
     sectionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7525,10 +8879,81 @@ export namespace Prisma {
     NOT?: LectureScalarWhereWithAggregatesInput | LectureScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Lecture"> | number
     title?: StringWithAggregatesFilter<"Lecture"> | string
-    content?: StringNullableWithAggregatesFilter<"Lecture"> | string | null
+    content?: StringWithAggregatesFilter<"Lecture"> | string
     sectionId?: IntWithAggregatesFilter<"Lecture"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Lecture"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Lecture"> | Date | string
+  }
+
+  export type LectureProgressWhereInput = {
+    AND?: LectureProgressWhereInput | LectureProgressWhereInput[]
+    OR?: LectureProgressWhereInput[]
+    NOT?: LectureProgressWhereInput | LectureProgressWhereInput[]
+    id?: IntFilter<"LectureProgress"> | number
+    userId?: IntFilter<"LectureProgress"> | number
+    lectureId?: IntFilter<"LectureProgress"> | number
+    completed?: BoolFilter<"LectureProgress"> | boolean
+    completedAt?: DateTimeNullableFilter<"LectureProgress"> | Date | string | null
+    createdAt?: DateTimeFilter<"LectureProgress"> | Date | string
+    updatedAt?: DateTimeFilter<"LectureProgress"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    lecture?: XOR<LectureScalarRelationFilter, LectureWhereInput>
+  }
+
+  export type LectureProgressOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+    completed?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    lecture?: LectureOrderByWithRelationInput
+  }
+
+  export type LectureProgressWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_lectureId?: LectureProgressUserIdLectureIdCompoundUniqueInput
+    AND?: LectureProgressWhereInput | LectureProgressWhereInput[]
+    OR?: LectureProgressWhereInput[]
+    NOT?: LectureProgressWhereInput | LectureProgressWhereInput[]
+    userId?: IntFilter<"LectureProgress"> | number
+    lectureId?: IntFilter<"LectureProgress"> | number
+    completed?: BoolFilter<"LectureProgress"> | boolean
+    completedAt?: DateTimeNullableFilter<"LectureProgress"> | Date | string | null
+    createdAt?: DateTimeFilter<"LectureProgress"> | Date | string
+    updatedAt?: DateTimeFilter<"LectureProgress"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    lecture?: XOR<LectureScalarRelationFilter, LectureWhereInput>
+  }, "id" | "userId_lectureId">
+
+  export type LectureProgressOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+    completed?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: LectureProgressCountOrderByAggregateInput
+    _avg?: LectureProgressAvgOrderByAggregateInput
+    _max?: LectureProgressMaxOrderByAggregateInput
+    _min?: LectureProgressMinOrderByAggregateInput
+    _sum?: LectureProgressSumOrderByAggregateInput
+  }
+
+  export type LectureProgressScalarWhereWithAggregatesInput = {
+    AND?: LectureProgressScalarWhereWithAggregatesInput | LectureProgressScalarWhereWithAggregatesInput[]
+    OR?: LectureProgressScalarWhereWithAggregatesInput[]
+    NOT?: LectureProgressScalarWhereWithAggregatesInput | LectureProgressScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"LectureProgress"> | number
+    userId?: IntWithAggregatesFilter<"LectureProgress"> | number
+    lectureId?: IntWithAggregatesFilter<"LectureProgress"> | number
+    completed?: BoolWithAggregatesFilter<"LectureProgress"> | boolean
+    completedAt?: DateTimeNullableWithAggregatesFilter<"LectureProgress"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"LectureProgress"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"LectureProgress"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -7539,6 +8964,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     authoredCourses?: CourseCreateNestedManyWithoutAuthorInput
     purchases?: PurchaseCreateNestedManyWithoutUserInput
+    lectureProgress?: LectureProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7550,6 +8976,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     authoredCourses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
     purchases?: PurchaseUncheckedCreateNestedManyWithoutUserInput
+    lectureProgress?: LectureProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -7560,6 +8987,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authoredCourses?: CourseUpdateManyWithoutAuthorNestedInput
     purchases?: PurchaseUpdateManyWithoutUserNestedInput
+    lectureProgress?: LectureProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7571,6 +8999,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authoredCourses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
     purchases?: PurchaseUncheckedUpdateManyWithoutUserNestedInput
+    lectureProgress?: LectureProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7775,42 +9204,46 @@ export namespace Prisma {
 
   export type LectureCreateInput = {
     title: string
-    content?: string | null
+    content: string
     createdAt?: Date | string
     updatedAt?: Date | string
     section: SectionCreateNestedOneWithoutLecturesInput
+    lectureProgress?: LectureProgressCreateNestedManyWithoutLectureInput
   }
 
   export type LectureUncheckedCreateInput = {
     id?: number
     title: string
-    content?: string | null
+    content: string
     sectionId: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    lectureProgress?: LectureProgressUncheckedCreateNestedManyWithoutLectureInput
   }
 
   export type LectureUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     section?: SectionUpdateOneRequiredWithoutLecturesNestedInput
+    lectureProgress?: LectureProgressUpdateManyWithoutLectureNestedInput
   }
 
   export type LectureUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
     sectionId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lectureProgress?: LectureProgressUncheckedUpdateManyWithoutLectureNestedInput
   }
 
   export type LectureCreateManyInput = {
     id?: number
     title: string
-    content?: string | null
+    content: string
     sectionId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7818,7 +9251,7 @@ export namespace Prisma {
 
   export type LectureUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7826,8 +9259,73 @@ export namespace Prisma {
   export type LectureUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
     sectionId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressCreateInput = {
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutLectureProgressInput
+    lecture: LectureCreateNestedOneWithoutLectureProgressInput
+  }
+
+  export type LectureProgressUncheckedCreateInput = {
+    id?: number
+    userId: number
+    lectureId: number
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LectureProgressUpdateInput = {
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutLectureProgressNestedInput
+    lecture?: LectureUpdateOneRequiredWithoutLectureProgressNestedInput
+  }
+
+  export type LectureProgressUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    lectureId?: IntFieldUpdateOperationsInput | number
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressCreateManyInput = {
+    id?: number
+    userId: number
+    lectureId: number
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LectureProgressUpdateManyMutationInput = {
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    lectureId?: IntFieldUpdateOperationsInput | number
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7888,11 +9386,21 @@ export namespace Prisma {
     none?: PurchaseWhereInput
   }
 
+  export type LectureProgressListRelationFilter = {
+    every?: LectureProgressWhereInput
+    some?: LectureProgressWhereInput
+    none?: LectureProgressWhereInput
+  }
+
   export type CourseOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type PurchaseOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LectureProgressOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8160,29 +9668,9 @@ export namespace Prisma {
     courseId?: SortOrder
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type SectionScalarRelationFilter = {
     is?: SectionWhereInput
     isNot?: SectionWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type LectureCountOrderByAggregateInput = {
@@ -8222,22 +9710,99 @@ export namespace Prisma {
     sectionId?: SortOrder
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type LectureScalarRelationFilter = {
+    is?: LectureWhereInput
+    isNot?: LectureWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type LectureProgressUserIdLectureIdCompoundUniqueInput = {
+    userId: number
+    lectureId: number
+  }
+
+  export type LectureProgressCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+    completed?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LectureProgressAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+  }
+
+  export type LectureProgressMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+    completed?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LectureProgressMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+    completed?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LectureProgressSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    lectureId?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type CourseCreateNestedManyWithoutAuthorInput = {
@@ -8254,6 +9819,13 @@ export namespace Prisma {
     connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
   }
 
+  export type LectureProgressCreateNestedManyWithoutUserInput = {
+    create?: XOR<LectureProgressCreateWithoutUserInput, LectureProgressUncheckedCreateWithoutUserInput> | LectureProgressCreateWithoutUserInput[] | LectureProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutUserInput | LectureProgressCreateOrConnectWithoutUserInput[]
+    createMany?: LectureProgressCreateManyUserInputEnvelope
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+  }
+
   export type CourseUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<CourseCreateWithoutAuthorInput, CourseUncheckedCreateWithoutAuthorInput> | CourseCreateWithoutAuthorInput[] | CourseUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CourseCreateOrConnectWithoutAuthorInput | CourseCreateOrConnectWithoutAuthorInput[]
@@ -8266,6 +9838,13 @@ export namespace Prisma {
     connectOrCreate?: PurchaseCreateOrConnectWithoutUserInput | PurchaseCreateOrConnectWithoutUserInput[]
     createMany?: PurchaseCreateManyUserInputEnvelope
     connect?: PurchaseWhereUniqueInput | PurchaseWhereUniqueInput[]
+  }
+
+  export type LectureProgressUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<LectureProgressCreateWithoutUserInput, LectureProgressUncheckedCreateWithoutUserInput> | LectureProgressCreateWithoutUserInput[] | LectureProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutUserInput | LectureProgressCreateOrConnectWithoutUserInput[]
+    createMany?: LectureProgressCreateManyUserInputEnvelope
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8308,6 +9887,20 @@ export namespace Prisma {
     deleteMany?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
   }
 
+  export type LectureProgressUpdateManyWithoutUserNestedInput = {
+    create?: XOR<LectureProgressCreateWithoutUserInput, LectureProgressUncheckedCreateWithoutUserInput> | LectureProgressCreateWithoutUserInput[] | LectureProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutUserInput | LectureProgressCreateOrConnectWithoutUserInput[]
+    upsert?: LectureProgressUpsertWithWhereUniqueWithoutUserInput | LectureProgressUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: LectureProgressCreateManyUserInputEnvelope
+    set?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    disconnect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    delete?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    update?: LectureProgressUpdateWithWhereUniqueWithoutUserInput | LectureProgressUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: LectureProgressUpdateManyWithWhereWithoutUserInput | LectureProgressUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: LectureProgressScalarWhereInput | LectureProgressScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -8342,6 +9935,20 @@ export namespace Prisma {
     update?: PurchaseUpdateWithWhereUniqueWithoutUserInput | PurchaseUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PurchaseUpdateManyWithWhereWithoutUserInput | PurchaseUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PurchaseScalarWhereInput | PurchaseScalarWhereInput[]
+  }
+
+  export type LectureProgressUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<LectureProgressCreateWithoutUserInput, LectureProgressUncheckedCreateWithoutUserInput> | LectureProgressCreateWithoutUserInput[] | LectureProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutUserInput | LectureProgressCreateOrConnectWithoutUserInput[]
+    upsert?: LectureProgressUpsertWithWhereUniqueWithoutUserInput | LectureProgressUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: LectureProgressCreateManyUserInputEnvelope
+    set?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    disconnect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    delete?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    update?: LectureProgressUpdateWithWhereUniqueWithoutUserInput | LectureProgressUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: LectureProgressUpdateManyWithWhereWithoutUserInput | LectureProgressUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: LectureProgressScalarWhereInput | LectureProgressScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAuthoredCoursesInput = {
@@ -8540,8 +10147,18 @@ export namespace Prisma {
     connect?: SectionWhereUniqueInput
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type LectureProgressCreateNestedManyWithoutLectureInput = {
+    create?: XOR<LectureProgressCreateWithoutLectureInput, LectureProgressUncheckedCreateWithoutLectureInput> | LectureProgressCreateWithoutLectureInput[] | LectureProgressUncheckedCreateWithoutLectureInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutLectureInput | LectureProgressCreateOrConnectWithoutLectureInput[]
+    createMany?: LectureProgressCreateManyLectureInputEnvelope
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+  }
+
+  export type LectureProgressUncheckedCreateNestedManyWithoutLectureInput = {
+    create?: XOR<LectureProgressCreateWithoutLectureInput, LectureProgressUncheckedCreateWithoutLectureInput> | LectureProgressCreateWithoutLectureInput[] | LectureProgressUncheckedCreateWithoutLectureInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutLectureInput | LectureProgressCreateOrConnectWithoutLectureInput[]
+    createMany?: LectureProgressCreateManyLectureInputEnvelope
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
   }
 
   export type SectionUpdateOneRequiredWithoutLecturesNestedInput = {
@@ -8550,6 +10167,70 @@ export namespace Prisma {
     upsert?: SectionUpsertWithoutLecturesInput
     connect?: SectionWhereUniqueInput
     update?: XOR<XOR<SectionUpdateToOneWithWhereWithoutLecturesInput, SectionUpdateWithoutLecturesInput>, SectionUncheckedUpdateWithoutLecturesInput>
+  }
+
+  export type LectureProgressUpdateManyWithoutLectureNestedInput = {
+    create?: XOR<LectureProgressCreateWithoutLectureInput, LectureProgressUncheckedCreateWithoutLectureInput> | LectureProgressCreateWithoutLectureInput[] | LectureProgressUncheckedCreateWithoutLectureInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutLectureInput | LectureProgressCreateOrConnectWithoutLectureInput[]
+    upsert?: LectureProgressUpsertWithWhereUniqueWithoutLectureInput | LectureProgressUpsertWithWhereUniqueWithoutLectureInput[]
+    createMany?: LectureProgressCreateManyLectureInputEnvelope
+    set?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    disconnect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    delete?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    update?: LectureProgressUpdateWithWhereUniqueWithoutLectureInput | LectureProgressUpdateWithWhereUniqueWithoutLectureInput[]
+    updateMany?: LectureProgressUpdateManyWithWhereWithoutLectureInput | LectureProgressUpdateManyWithWhereWithoutLectureInput[]
+    deleteMany?: LectureProgressScalarWhereInput | LectureProgressScalarWhereInput[]
+  }
+
+  export type LectureProgressUncheckedUpdateManyWithoutLectureNestedInput = {
+    create?: XOR<LectureProgressCreateWithoutLectureInput, LectureProgressUncheckedCreateWithoutLectureInput> | LectureProgressCreateWithoutLectureInput[] | LectureProgressUncheckedCreateWithoutLectureInput[]
+    connectOrCreate?: LectureProgressCreateOrConnectWithoutLectureInput | LectureProgressCreateOrConnectWithoutLectureInput[]
+    upsert?: LectureProgressUpsertWithWhereUniqueWithoutLectureInput | LectureProgressUpsertWithWhereUniqueWithoutLectureInput[]
+    createMany?: LectureProgressCreateManyLectureInputEnvelope
+    set?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    disconnect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    delete?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    connect?: LectureProgressWhereUniqueInput | LectureProgressWhereUniqueInput[]
+    update?: LectureProgressUpdateWithWhereUniqueWithoutLectureInput | LectureProgressUpdateWithWhereUniqueWithoutLectureInput[]
+    updateMany?: LectureProgressUpdateManyWithWhereWithoutLectureInput | LectureProgressUpdateManyWithWhereWithoutLectureInput[]
+    deleteMany?: LectureProgressScalarWhereInput | LectureProgressScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutLectureProgressInput = {
+    create?: XOR<UserCreateWithoutLectureProgressInput, UserUncheckedCreateWithoutLectureProgressInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLectureProgressInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type LectureCreateNestedOneWithoutLectureProgressInput = {
+    create?: XOR<LectureCreateWithoutLectureProgressInput, LectureUncheckedCreateWithoutLectureProgressInput>
+    connectOrCreate?: LectureCreateOrConnectWithoutLectureProgressInput
+    connect?: LectureWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type UserUpdateOneRequiredWithoutLectureProgressNestedInput = {
+    create?: XOR<UserCreateWithoutLectureProgressInput, UserUncheckedCreateWithoutLectureProgressInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLectureProgressInput
+    upsert?: UserUpsertWithoutLectureProgressInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLectureProgressInput, UserUpdateWithoutLectureProgressInput>, UserUncheckedUpdateWithoutLectureProgressInput>
+  }
+
+  export type LectureUpdateOneRequiredWithoutLectureProgressNestedInput = {
+    create?: XOR<LectureCreateWithoutLectureProgressInput, LectureUncheckedCreateWithoutLectureProgressInput>
+    connectOrCreate?: LectureCreateOrConnectWithoutLectureProgressInput
+    upsert?: LectureUpsertWithoutLectureProgressInput
+    connect?: LectureWhereUniqueInput
+    update?: XOR<XOR<LectureUpdateToOneWithWhereWithoutLectureProgressInput, LectureUpdateWithoutLectureProgressInput>, LectureUncheckedUpdateWithoutLectureProgressInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -8679,35 +10360,42 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedIntNullableFilter<$PrismaModel = never> = {
@@ -8773,6 +10461,33 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LectureProgressCreateWithoutUserInput = {
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lecture: LectureCreateNestedOneWithoutLectureProgressInput
+  }
+
+  export type LectureProgressUncheckedCreateWithoutUserInput = {
+    id?: number
+    lectureId: number
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LectureProgressCreateOrConnectWithoutUserInput = {
+    where: LectureProgressWhereUniqueInput
+    create: XOR<LectureProgressCreateWithoutUserInput, LectureProgressUncheckedCreateWithoutUserInput>
+  }
+
+  export type LectureProgressCreateManyUserInputEnvelope = {
+    data: LectureProgressCreateManyUserInput | LectureProgressCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CourseUpsertWithWhereUniqueWithoutAuthorInput = {
     where: CourseWhereUniqueInput
     update: XOR<CourseUpdateWithoutAuthorInput, CourseUncheckedUpdateWithoutAuthorInput>
@@ -8828,6 +10543,35 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Purchase"> | Date | string
   }
 
+  export type LectureProgressUpsertWithWhereUniqueWithoutUserInput = {
+    where: LectureProgressWhereUniqueInput
+    update: XOR<LectureProgressUpdateWithoutUserInput, LectureProgressUncheckedUpdateWithoutUserInput>
+    create: XOR<LectureProgressCreateWithoutUserInput, LectureProgressUncheckedCreateWithoutUserInput>
+  }
+
+  export type LectureProgressUpdateWithWhereUniqueWithoutUserInput = {
+    where: LectureProgressWhereUniqueInput
+    data: XOR<LectureProgressUpdateWithoutUserInput, LectureProgressUncheckedUpdateWithoutUserInput>
+  }
+
+  export type LectureProgressUpdateManyWithWhereWithoutUserInput = {
+    where: LectureProgressScalarWhereInput
+    data: XOR<LectureProgressUpdateManyMutationInput, LectureProgressUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type LectureProgressScalarWhereInput = {
+    AND?: LectureProgressScalarWhereInput | LectureProgressScalarWhereInput[]
+    OR?: LectureProgressScalarWhereInput[]
+    NOT?: LectureProgressScalarWhereInput | LectureProgressScalarWhereInput[]
+    id?: IntFilter<"LectureProgress"> | number
+    userId?: IntFilter<"LectureProgress"> | number
+    lectureId?: IntFilter<"LectureProgress"> | number
+    completed?: BoolFilter<"LectureProgress"> | boolean
+    completedAt?: DateTimeNullableFilter<"LectureProgress"> | Date | string | null
+    createdAt?: DateTimeFilter<"LectureProgress"> | Date | string
+    updatedAt?: DateTimeFilter<"LectureProgress"> | Date | string
+  }
+
   export type UserCreateWithoutAuthoredCoursesInput = {
     email: string
     password: string
@@ -8835,6 +10579,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     purchases?: PurchaseCreateNestedManyWithoutUserInput
+    lectureProgress?: LectureProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAuthoredCoursesInput = {
@@ -8845,6 +10590,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     purchases?: PurchaseUncheckedCreateNestedManyWithoutUserInput
+    lectureProgress?: LectureProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAuthoredCoursesInput = {
@@ -8916,6 +10662,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     purchases?: PurchaseUpdateManyWithoutUserNestedInput
+    lectureProgress?: LectureProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuthoredCoursesInput = {
@@ -8926,6 +10673,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     purchases?: PurchaseUncheckedUpdateManyWithoutUserNestedInput
+    lectureProgress?: LectureProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PurchaseUpsertWithWhereUniqueWithoutCourseInput = {
@@ -8978,6 +10726,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     authoredCourses?: CourseCreateNestedManyWithoutAuthorInput
+    lectureProgress?: LectureProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPurchasesInput = {
@@ -8988,6 +10737,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     authoredCourses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    lectureProgress?: LectureProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPurchasesInput = {
@@ -9039,6 +10789,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authoredCourses?: CourseUpdateManyWithoutAuthorNestedInput
+    lectureProgress?: LectureProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPurchasesInput = {
@@ -9049,6 +10800,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     authoredCourses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    lectureProgress?: LectureProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CourseUpsertWithoutPurchasesInput = {
@@ -9111,17 +10863,19 @@ export namespace Prisma {
 
   export type LectureCreateWithoutSectionInput = {
     title: string
-    content?: string | null
+    content: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lectureProgress?: LectureProgressCreateNestedManyWithoutLectureInput
   }
 
   export type LectureUncheckedCreateWithoutSectionInput = {
     id?: number
     title: string
-    content?: string | null
+    content: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    lectureProgress?: LectureProgressUncheckedCreateNestedManyWithoutLectureInput
   }
 
   export type LectureCreateOrConnectWithoutSectionInput = {
@@ -9188,7 +10942,7 @@ export namespace Prisma {
     NOT?: LectureScalarWhereInput | LectureScalarWhereInput[]
     id?: IntFilter<"Lecture"> | number
     title?: StringFilter<"Lecture"> | string
-    content?: StringNullableFilter<"Lecture"> | string | null
+    content?: StringFilter<"Lecture"> | string
     sectionId?: IntFilter<"Lecture"> | number
     createdAt?: DateTimeFilter<"Lecture"> | Date | string
     updatedAt?: DateTimeFilter<"Lecture"> | Date | string
@@ -9212,6 +10966,33 @@ export namespace Prisma {
   export type SectionCreateOrConnectWithoutLecturesInput = {
     where: SectionWhereUniqueInput
     create: XOR<SectionCreateWithoutLecturesInput, SectionUncheckedCreateWithoutLecturesInput>
+  }
+
+  export type LectureProgressCreateWithoutLectureInput = {
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutLectureProgressInput
+  }
+
+  export type LectureProgressUncheckedCreateWithoutLectureInput = {
+    id?: number
+    userId: number
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LectureProgressCreateOrConnectWithoutLectureInput = {
+    where: LectureProgressWhereUniqueInput
+    create: XOR<LectureProgressCreateWithoutLectureInput, LectureProgressUncheckedCreateWithoutLectureInput>
+  }
+
+  export type LectureProgressCreateManyLectureInputEnvelope = {
+    data: LectureProgressCreateManyLectureInput | LectureProgressCreateManyLectureInput[]
+    skipDuplicates?: boolean
   }
 
   export type SectionUpsertWithoutLecturesInput = {
@@ -9240,6 +11021,130 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LectureProgressUpsertWithWhereUniqueWithoutLectureInput = {
+    where: LectureProgressWhereUniqueInput
+    update: XOR<LectureProgressUpdateWithoutLectureInput, LectureProgressUncheckedUpdateWithoutLectureInput>
+    create: XOR<LectureProgressCreateWithoutLectureInput, LectureProgressUncheckedCreateWithoutLectureInput>
+  }
+
+  export type LectureProgressUpdateWithWhereUniqueWithoutLectureInput = {
+    where: LectureProgressWhereUniqueInput
+    data: XOR<LectureProgressUpdateWithoutLectureInput, LectureProgressUncheckedUpdateWithoutLectureInput>
+  }
+
+  export type LectureProgressUpdateManyWithWhereWithoutLectureInput = {
+    where: LectureProgressScalarWhereInput
+    data: XOR<LectureProgressUpdateManyMutationInput, LectureProgressUncheckedUpdateManyWithoutLectureInput>
+  }
+
+  export type UserCreateWithoutLectureProgressInput = {
+    email: string
+    password: string
+    role: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authoredCourses?: CourseCreateNestedManyWithoutAuthorInput
+    purchases?: PurchaseCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutLectureProgressInput = {
+    id?: number
+    email: string
+    password: string
+    role: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    authoredCourses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    purchases?: PurchaseUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutLectureProgressInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLectureProgressInput, UserUncheckedCreateWithoutLectureProgressInput>
+  }
+
+  export type LectureCreateWithoutLectureProgressInput = {
+    title: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    section: SectionCreateNestedOneWithoutLecturesInput
+  }
+
+  export type LectureUncheckedCreateWithoutLectureProgressInput = {
+    id?: number
+    title: string
+    content: string
+    sectionId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LectureCreateOrConnectWithoutLectureProgressInput = {
+    where: LectureWhereUniqueInput
+    create: XOR<LectureCreateWithoutLectureProgressInput, LectureUncheckedCreateWithoutLectureProgressInput>
+  }
+
+  export type UserUpsertWithoutLectureProgressInput = {
+    update: XOR<UserUpdateWithoutLectureProgressInput, UserUncheckedUpdateWithoutLectureProgressInput>
+    create: XOR<UserCreateWithoutLectureProgressInput, UserUncheckedCreateWithoutLectureProgressInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLectureProgressInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLectureProgressInput, UserUncheckedUpdateWithoutLectureProgressInput>
+  }
+
+  export type UserUpdateWithoutLectureProgressInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authoredCourses?: CourseUpdateManyWithoutAuthorNestedInput
+    purchases?: PurchaseUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLectureProgressInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    authoredCourses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    purchases?: PurchaseUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type LectureUpsertWithoutLectureProgressInput = {
+    update: XOR<LectureUpdateWithoutLectureProgressInput, LectureUncheckedUpdateWithoutLectureProgressInput>
+    create: XOR<LectureCreateWithoutLectureProgressInput, LectureUncheckedCreateWithoutLectureProgressInput>
+    where?: LectureWhereInput
+  }
+
+  export type LectureUpdateToOneWithWhereWithoutLectureProgressInput = {
+    where?: LectureWhereInput
+    data: XOR<LectureUpdateWithoutLectureProgressInput, LectureUncheckedUpdateWithoutLectureProgressInput>
+  }
+
+  export type LectureUpdateWithoutLectureProgressInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    section?: SectionUpdateOneRequiredWithoutLecturesNestedInput
+  }
+
+  export type LectureUncheckedUpdateWithoutLectureProgressInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    sectionId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CourseCreateManyAuthorInput = {
     id?: number
     title: string
@@ -9253,6 +11158,15 @@ export namespace Prisma {
     id?: number
     courseId: number
     createdAt?: Date | string
+  }
+
+  export type LectureProgressCreateManyUserInput = {
+    id?: number
+    lectureId: number
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type CourseUpdateWithoutAuthorInput = {
@@ -9300,6 +11214,32 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     courseId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressUpdateWithoutUserInput = {
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lecture?: LectureUpdateOneRequiredWithoutLectureProgressNestedInput
+  }
+
+  export type LectureProgressUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    lectureId?: IntFieldUpdateOperationsInput | number
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    lectureId?: IntFieldUpdateOperationsInput | number
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PurchaseCreateManyCourseInput = {
@@ -9357,30 +11297,67 @@ export namespace Prisma {
   export type LectureCreateManySectionInput = {
     id?: number
     title: string
-    content?: string | null
+    content: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type LectureUpdateWithoutSectionInput = {
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lectureProgress?: LectureProgressUpdateManyWithoutLectureNestedInput
   }
 
   export type LectureUncheckedUpdateWithoutSectionInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lectureProgress?: LectureProgressUncheckedUpdateManyWithoutLectureNestedInput
   }
 
   export type LectureUncheckedUpdateManyWithoutSectionInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressCreateManyLectureInput = {
+    id?: number
+    userId: number
+    completed?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LectureProgressUpdateWithoutLectureInput = {
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutLectureProgressNestedInput
+  }
+
+  export type LectureProgressUncheckedUpdateWithoutLectureInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LectureProgressUncheckedUpdateManyWithoutLectureInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    completed?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

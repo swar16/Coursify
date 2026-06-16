@@ -124,4 +124,58 @@ router.delete("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedReques
     })
     return res.json({ message: "Lecture deleted successfully" });
 });
+
+router.post("/:id/completed", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
+    const userId = req.user!.userId;
+    const lectureId = parseInt(req.params.id as string);
+    if(isNaN(lectureId)){
+        return res.status(400).json({ error: "Invalid lecture ID" });
+    }
+    const lecture = await prisma.lecture.findUnique({
+        where: {
+            id: lectureId
+        },
+        include: {
+            section: {
+                include: {
+                    course:true
+                }
+            }
+        }
+    })
+    if(!lecture){
+        return res.status(404).json({ error: "Lecture not found" });
+    }
+    const courseId = lecture.section.course.id;
+    const bought=await prisma.purchase.findUnique({
+        where: {
+            userId_courseId: {
+                userId,
+                courseId
+            }
+        }
+    })
+    if(!bought){
+        return res.status(403).json({ error: "You have not purchased this course" });
+    }
+    await prisma.lectureProgress.upsert({
+        where: {
+            userId_lectureId: {
+                userId,
+                lectureId
+            }
+        },
+        update: {
+            completed: true,
+            completedAt: new Date()
+        },
+        create: {
+            userId,
+            lectureId,
+            completed: true,
+            completedAt: new Date()
+        }
+    })
+    return res.json({ message: "Lecture marked as completed" });
+});
 export default router;
