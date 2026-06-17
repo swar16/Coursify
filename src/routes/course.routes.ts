@@ -1,7 +1,7 @@
 import { Request, Router } from "express";
 const router=Router();
 import prisma from "../lib/prisma";
-import {VerifyUser, InstructorOnly } from "../middleware/auth";
+import {VerifyUser, InstructorOnly, StudentOnly, OptionalAuth } from "../middleware/auth";
 import { CourseSchema } from "../schemas/course.schema";
 type AuthenticatedRequest = Request & {
     user?: {
@@ -202,18 +202,22 @@ router.delete("/:id",VerifyUser, InstructorOnly, async(req: AuthenticatedRequest
 
 })
 
-router.get("/:id", async(req, res) => {
-    
-    const courseId = parseInt(req.params.id);
-    if(isNaN(courseId)){
-        return res.status(400).json({ error: "Invalid course ID" });
+router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
+    const userId = req.user?.userId;
+    const courseId = parseInt(req.params.id as string);
+
+    if (isNaN(courseId)) {
+        return res.status(400).json({
+            error: "Invalid course ID"
+        });
     }
-    const course=await prisma.course.findUnique({
+
+    const course = await prisma.course.findUnique({
         where: {
             id: courseId
         },
         include: {
-            author:{
+            author: {
                 select: {
                     id: true,
                     role: true
@@ -224,19 +228,100 @@ router.get("/:id", async(req, res) => {
                     lectures: {
                         select: {
                             id: true,
-                            title: true                        },
+                            title: true
+                        },
                         orderBy: {
-                            createdAt: 'asc'
+                            createdAt: "asc"
                         }
                     }
                 }
             }
         }
-    })
-    if(!course){
-        return res.status(404).json({ error: "Course not found" });
+    });
+
+    if (!course) {
+        return res.status(404).json({
+            error: "Course not found"
+        });
     }
-    return res.json(course);
+
+    const response = {
+        course,
+        hasPurchased: false,
+        progress: null as null | {
+            totalLectures: number;
+            completedLectures: number;
+            progressPercentage: number;
+        },
+        completedLectureIdList: [] as number[]
+    };
+
+    if (!userId) {
+        return res.json(response);
+    }
+
+    const purchase = await prisma.purchase.findUnique({
+        where: {
+            userId_courseId: {
+                userId,
+                courseId
+            }
+        }
+    });
+
+    if (!purchase) {
+        return res.json(response);
+    }
+
+    const totalLectures = course.sections.reduce(
+        (acc, section) => acc + section.lectures.length,
+        0
+    );
+
+    const [completedLectures, progressRows] = await Promise.all([
+        prisma.lectureProgress.count({
+            where: {
+                userId,
+                completed: true,
+                lecture: {
+                    section: {
+                        courseId
+                    }
+                }
+            }
+        }),
+
+        prisma.lectureProgress.findMany({
+            where: {
+                userId,
+                completed: true,
+                lecture: {
+                    section: {
+                        courseId
+                    }
+                }
+            },
+            select: {
+                lectureId: true
+            }
+        })
+    ]);
+
+    response.hasPurchased = true;
+
+    response.progress = {
+        totalLectures,
+        completedLectures,
+        progressPercentage:
+            totalLectures > 0
+                ? (completedLectures / totalLectures) * 100
+                : 0
+    };
+
+    response.completedLectureIdList =
+        progressRows.map(row => row.lectureId);
+
+    return res.json(response);
 });
 
 
@@ -301,6 +386,5 @@ router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: Authenticate
         }
     })
     return res.status(201).json(section);
-});
-
+});    
 export default router;

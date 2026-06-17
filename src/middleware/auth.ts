@@ -45,4 +45,22 @@ function StudentOnly(req: AuthenticatedRequest, res: Response, next: NextFunctio
     next();
 }
 
-export { VerifyUser, InstructorOnly, StudentOnly };
+function OptionalAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        if (!authHeader.startsWith("Bearer ")) {
+            return next();
+        }
+        const token = authHeader.split(" ")[1];
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+                req.user = decoded as JwtPayload;
+            } catch (err) {
+                // Invalid token, ignore and proceed without user info
+            }
+        }
+    }
+    next();
+}
+export { VerifyUser, InstructorOnly, StudentOnly, OptionalAuth };
