@@ -134,6 +134,7 @@ exports.Prisma.CourseScalarFieldEnum = {
   title: 'title',
   description: 'description',
   price: 'price',
+  status: 'status',
   authorId: 'authorId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -190,6 +191,12 @@ exports.Prisma.NullsOrder = {
 exports.Role = exports.$Enums.Role = {
   STUDENT: 'STUDENT',
   INSTRUCTOR: 'INSTRUCTOR'
+};
+
+exports.CourseStatus = exports.$Enums.CourseStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
 };
 
 exports.Prisma.ModelName = {

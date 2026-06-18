@@ -3,6 +3,7 @@ const router=Router();
 import prisma from "../lib/prisma";
 import {VerifyUser, InstructorOnly, StudentOnly, OptionalAuth } from "../middleware/auth";
 import { CourseSchema } from "../schemas/course.schema";
+import { CourseStatusSchema } from "../schemas/course-status.schema";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -73,7 +74,7 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
 });
 
 router.get("/", async(req, res) => {
-    const whereClause: any ={};
+    const whereClause: any ={status:"PUBLISHED"};
     const sort= req.query.sort as string;
     let orderBy={};
     switch(sort){
@@ -140,7 +141,6 @@ router.get("/", async(req, res) => {
             author: {
                 select: {
                     id: true,
-                    email: true,
                     role: true
                 }
             }
@@ -204,7 +204,7 @@ router.delete("/:id",VerifyUser, InstructorOnly, async(req: AuthenticatedRequest
 
 router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
     const userId = req.user?.userId;
-    const courseId = parseInt(req.params.id as string);
+    const courseId = parseInt(req.params.id as string );
 
     if (isNaN(courseId)) {
         return res.status(400).json({
@@ -256,20 +256,50 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
         completedLectureIdList: [] as number[]
     };
 
+    const isAuthor = userId === course.authorId;
+
+    let purchase = null;
+
+    if (userId) {
+        purchase = await prisma.purchase.findUnique({
+            where: {
+                userId_courseId: {
+                    userId,
+                    courseId
+                }
+            }
+        });
+    }
+
+    const hasPurchased = !!purchase;
+
+    // Visibility Rules
+    switch (course.status) {
+        case "DRAFT":
+            if (!isAuthor) {
+                return res.status(403).json({
+                    error: "You're not authorized to access this course"
+                });
+            }
+            break;
+
+        case "ARCHIVED":
+            if (!isAuthor && !hasPurchased) {
+                return res.status(403).json({
+                    error: "You're not authorized to access this course"
+                });
+            }
+            break;
+
+        case "PUBLISHED":
+            break;
+    }
+
     if (!userId) {
         return res.json(response);
     }
 
-    const purchase = await prisma.purchase.findUnique({
-        where: {
-            userId_courseId: {
-                userId,
-                courseId
-            }
-        }
-    });
-
-    if (!purchase) {
+    if (!hasPurchased && !isAuthor) {
         return res.json(response);
     }
 
@@ -307,7 +337,7 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
         })
     ]);
 
-    response.hasPurchased = true;
+    response.hasPurchased = hasPurchased;
 
     response.progress = {
         totalLectures,
@@ -324,12 +354,15 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
     return res.json(response);
 });
 
-
-
 router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) => {
     
     const id = req.params.id;
     const courseId = parseInt(id as string);
+    if (isNaN(courseId)) {
+        return res.status(400).json({
+            error: "Invalid course ID"
+        });
+    }
     const course=await prisma.course.findUnique({
         where: {
             id: courseId
@@ -337,6 +370,9 @@ router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) =
     })
     if(!course){
         return res.status(404).json({ error: "Course not found" });
+    }
+    if(course.status !== "PUBLISHED"){
+        return res.status(409).json({ error: "Course is not published" });
     }
     const alreadyPurchased = await prisma.purchase.findUnique({
         where: {
@@ -358,7 +394,127 @@ router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) =
     return res.json({ message: "Course purchased successfully" });
 });
 
+router.patch("/:id/status",VerifyUser,InstructorOnly,async (req: AuthenticatedRequest, res) => {
+        const courseId = parseInt(req.params.id as string);
+        const userId = req.user!.userId;
 
+        if (isNaN(courseId)) {
+            return res.status(400).json({
+                error: "Invalid course ID"
+            });
+        }
+
+        const parsed = CourseStatusSchema.safeParse(req.body);
+
+        if (!parsed.success) {
+            return res.status(400).json({
+                error: parsed.error.issues[0]?.message
+            });
+        }
+
+        const { status } = parsed.data;
+
+        const course = await prisma.course.findUnique({
+            where: {
+                id: courseId
+            }
+        });
+
+        if (!course) {
+            return res.status(404).json({
+                error: "Course not found"
+            });
+        }
+
+        if (course.authorId !== userId) {
+            return res.status(403).json({
+                error: "You are not the author of this course"
+            });
+        }
+
+        // idempotent
+        if (course.status === status) {
+            return res.json(course);
+        }
+        const validTransitions = {
+            DRAFT: ["PUBLISHED"],
+            PUBLISHED: ["ARCHIVED"],
+            ARCHIVED: ["PUBLISHED"]
+        } as const;
+
+        const allowedStatuses =
+            validTransitions[
+                course.status as keyof typeof validTransitions
+            ];
+
+        if (!allowedStatuses.includes(status as never)) {
+            return res.status(409).json({
+                error: "Invalid status transition"
+            });
+        }
+        if (status === "PUBLISHED") {
+            const [
+                sectionCount,
+                lectureCount,
+                emptySection
+            ] = await Promise.all([
+                prisma.section.count({
+                    where: {
+                        courseId
+                    }
+                }),
+
+                prisma.lecture.count({
+                    where: {
+                        section: {
+                            courseId
+                        }
+                    }
+                }),
+
+                prisma.section.findFirst({
+                    where: {
+                        courseId,
+                        lectures: {
+                            none: {}
+                        }
+                    }
+                })
+            ]);
+            if (sectionCount === 0) {
+                return res.status(409).json({
+                    error: "Course must contain at least one section"
+                });
+            }
+
+            if (lectureCount === 0) {
+                return res.status(409).json({
+                    error: "Course must contain at least one lecture"
+                });
+            }
+
+            if (emptySection) {
+                return res.status(409).json({
+                    error:
+                        "All sections must contain at least one lecture"
+                });
+            }
+        }
+        const updatedCourse =
+        await prisma.course.update({
+            where: {
+                id: courseId
+            },
+            data: {
+                status
+            }
+        });
+        
+
+        return res.json(updatedCourse);
+        
+    }
+);
 router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, res) => {
     const courseId = parseInt(req.params.id as string);
     if(isNaN(courseId)){

@@ -55,11 +55,24 @@ export namespace $Enums {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const CourseStatus: {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+export type CourseStatus = (typeof CourseStatus)[keyof typeof CourseStatus]
+
 }
 
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type CourseStatus = $Enums.CourseStatus
+
+export const CourseStatus: typeof $Enums.CourseStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2695,6 +2708,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     price: number | null
+    status: $Enums.CourseStatus | null
     authorId: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2705,6 +2719,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     price: number | null
+    status: $Enums.CourseStatus | null
     authorId: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2715,6 +2730,7 @@ export namespace Prisma {
     title: number
     description: number
     price: number
+    status: number
     authorId: number
     createdAt: number
     updatedAt: number
@@ -2739,6 +2755,7 @@ export namespace Prisma {
     title?: true
     description?: true
     price?: true
+    status?: true
     authorId?: true
     createdAt?: true
     updatedAt?: true
@@ -2749,6 +2766,7 @@ export namespace Prisma {
     title?: true
     description?: true
     price?: true
+    status?: true
     authorId?: true
     createdAt?: true
     updatedAt?: true
@@ -2759,6 +2777,7 @@ export namespace Prisma {
     title?: true
     description?: true
     price?: true
+    status?: true
     authorId?: true
     createdAt?: true
     updatedAt?: true
@@ -2856,6 +2875,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status: $Enums.CourseStatus
     authorId: number
     createdAt: Date
     updatedAt: Date
@@ -2885,6 +2905,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     price?: boolean
+    status?: boolean
     authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2899,6 +2920,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     price?: boolean
+    status?: boolean
     authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2910,6 +2932,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     price?: boolean
+    status?: boolean
     authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2921,12 +2944,13 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     price?: boolean
+    status?: boolean
     authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "price" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "price" | "status" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
   export type CourseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     purchases?: boolean | Course$purchasesArgs<ExtArgs>
@@ -2952,6 +2976,7 @@ export namespace Prisma {
       title: string
       description: string
       price: number
+      status: $Enums.CourseStatus
       authorId: number
       createdAt: Date
       updatedAt: Date
@@ -3385,6 +3410,7 @@ export namespace Prisma {
     readonly title: FieldRef<"Course", 'String'>
     readonly description: FieldRef<"Course", 'String'>
     readonly price: FieldRef<"Course", 'Float'>
+    readonly status: FieldRef<"Course", 'CourseStatus'>
     readonly authorId: FieldRef<"Course", 'Int'>
     readonly createdAt: FieldRef<"Course", 'DateTime'>
     readonly updatedAt: FieldRef<"Course", 'DateTime'>
@@ -8400,6 +8426,7 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     price: 'price',
+    status: 'status',
     authorId: 'authorId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -8554,6 +8581,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'CourseStatus'
+   */
+  export type EnumCourseStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CourseStatus[]'
+   */
+  export type ListEnumCourseStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -8639,6 +8680,7 @@ export namespace Prisma {
     title?: StringFilter<"Course"> | string
     description?: StringFilter<"Course"> | string
     price?: FloatFilter<"Course"> | number
+    status?: EnumCourseStatusFilter<"Course"> | $Enums.CourseStatus
     authorId?: IntFilter<"Course"> | number
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
@@ -8652,6 +8694,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
+    status?: SortOrder
     authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8668,6 +8711,7 @@ export namespace Prisma {
     title?: StringFilter<"Course"> | string
     description?: StringFilter<"Course"> | string
     price?: FloatFilter<"Course"> | number
+    status?: EnumCourseStatusFilter<"Course"> | $Enums.CourseStatus
     authorId?: IntFilter<"Course"> | number
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
@@ -8681,6 +8725,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
+    status?: SortOrder
     authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8699,6 +8744,7 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Course"> | string
     description?: StringWithAggregatesFilter<"Course"> | string
     price?: FloatWithAggregatesFilter<"Course"> | number
+    status?: EnumCourseStatusWithAggregatesFilter<"Course"> | $Enums.CourseStatus
     authorId?: IntWithAggregatesFilter<"Course"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Course"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Course"> | Date | string
@@ -9032,6 +9078,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutAuthoredCoursesInput
@@ -9044,6 +9091,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     authorId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9055,6 +9103,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutAuthoredCoursesNestedInput
@@ -9067,6 +9116,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     authorId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9079,6 +9129,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     authorId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9088,6 +9139,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9097,6 +9149,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     authorId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9508,6 +9561,13 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type EnumCourseStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CourseStatus | EnumCourseStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCourseStatusFilter<$PrismaModel> | $Enums.CourseStatus
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -9528,6 +9588,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
+    status?: SortOrder
     authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9544,6 +9605,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
+    status?: SortOrder
     authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9554,6 +9616,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
+    status?: SortOrder
     authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -9579,6 +9642,16 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type EnumCourseStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CourseStatus | EnumCourseStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCourseStatusWithAggregatesFilter<$PrismaModel> | $Enums.CourseStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCourseStatusFilter<$PrismaModel>
+    _max?: NestedEnumCourseStatusFilter<$PrismaModel>
   }
 
   export type CourseScalarRelationFilter = {
@@ -9993,6 +10066,10 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type EnumCourseStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CourseStatus
+  }
+
   export type UserUpdateOneRequiredWithoutAuthoredCoursesNestedInput = {
     create?: XOR<UserCreateWithoutAuthoredCoursesInput, UserUncheckedCreateWithoutAuthoredCoursesInput>
     connectOrCreate?: UserCreateOrConnectWithoutAuthoredCoursesInput
@@ -10344,6 +10421,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumCourseStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CourseStatus | EnumCourseStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCourseStatusFilter<$PrismaModel> | $Enums.CourseStatus
+  }
+
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -10358,6 +10442,16 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCourseStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CourseStatus | EnumCourseStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CourseStatus[] | ListEnumCourseStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCourseStatusWithAggregatesFilter<$PrismaModel> | $Enums.CourseStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCourseStatusFilter<$PrismaModel>
+    _max?: NestedEnumCourseStatusFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -10413,6 +10507,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     createdAt?: Date | string
     updatedAt?: Date | string
     purchases?: PurchaseCreateNestedManyWithoutCourseInput
@@ -10424,6 +10519,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     createdAt?: Date | string
     updatedAt?: Date | string
     purchases?: PurchaseUncheckedCreateNestedManyWithoutCourseInput
@@ -10512,6 +10608,7 @@ export namespace Prisma {
     title?: StringFilter<"Course"> | string
     description?: StringFilter<"Course"> | string
     price?: FloatFilter<"Course"> | number
+    status?: EnumCourseStatusFilter<"Course"> | $Enums.CourseStatus
     authorId?: IntFilter<"Course"> | number
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
@@ -10749,6 +10846,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutAuthoredCoursesInput
@@ -10760,6 +10858,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     authorId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10818,6 +10917,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutAuthoredCoursesNestedInput
@@ -10829,6 +10929,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     authorId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10839,6 +10940,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutAuthoredCoursesInput
@@ -10850,6 +10952,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     authorId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10903,6 +11006,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutAuthoredCoursesNestedInput
@@ -10914,6 +11018,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     authorId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11150,6 +11255,7 @@ export namespace Prisma {
     title: string
     description: string
     price: number
+    status?: $Enums.CourseStatus
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11173,6 +11279,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     purchases?: PurchaseUpdateManyWithoutCourseNestedInput
@@ -11184,6 +11291,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     purchases?: PurchaseUncheckedUpdateManyWithoutCourseNestedInput
@@ -11195,6 +11303,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    status?: EnumCourseStatusFieldUpdateOperationsInput | $Enums.CourseStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

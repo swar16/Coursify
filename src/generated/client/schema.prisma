@@ -30,11 +30,18 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model Course {
-  id          Int    @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   title       String
   description String
   price       Float
+  status      CourseStatus @default(DRAFT)
 
   // author of the course
   author   User @relation(fields: [authorId], references: [id])
