@@ -442,46 +442,126 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
     return res.json(response);
 });
 
-router.get("/:id/reviews", async (req: Request, res: Response) => {
-    const courseId = parseInt(req.params.id as string);
+router.get("/:id/reviews",OptionalAuth,async (req: AuthenticatedRequest, res: Response) => {
+        const courseId = parseInt(req.params.id as string);
+        const userId = req.user?.userId;
 
-    if (isNaN(courseId)) {
-        return res.status(400).json({
-            error: "Invalid course ID"
-        });
-    }
-
-    const course = await prisma.course.findUnique({
-        where: {
-            id: courseId
+        if (isNaN(courseId)) {
+            return res.status(400).json({
+                error: "Invalid course ID"
+            });
         }
-    });
 
-    if (!course) {
-        return res.status(404).json({
-            error: "Course not found"
+        const course = await prisma.course.findUnique({
+            where: {
+                id: courseId
+            }
         });
-    }
 
-    const reviews = await prisma.review.findMany({
-        where: {
-            courseId
-        },
-        orderBy: {
-            createdAt: "desc"
-        },
-        include: {
-            user: {
+        if (!course) {
+            return res.status(404).json({
+                error: "Course not found"
+            });
+        }
+
+        let hasPurchased = false;
+
+        if (userId && course.status === "ARCHIVED") {
+            const purchase =
+                await prisma.purchase.findUnique({
+                    where: {
+                        userId_courseId: {
+                            userId,
+                            courseId
+                        }
+                    }
+                });
+
+            hasPurchased = !!purchase;
+        }
+
+        switch (course.status) {
+            case "DRAFT":
+                if (userId !== course.authorId) {
+                    return res.status(403).json({
+                        error:
+                            "You're not authorized to access this course"
+                    });
+                }
+                break;
+
+            case "ARCHIVED":
+                if (
+                    userId !== course.authorId &&
+                    !hasPurchased
+                ) {
+                    return res.status(403).json({
+                        error:
+                            "You're not authorized to access this course"
+                    });
+                }
+                break;
+
+            case "PUBLISHED":
+                break;
+        }
+
+        const page = Math.max(
+            1,
+            Number(req.query.page) || 1
+        );
+
+        const limit = Math.min(
+            100,
+            Math.max(
+                1,
+                Number(req.query.limit) || 10
+            )
+        );
+
+        const totalReviews =
+            await prisma.review.count({
+                where: {
+                    courseId
+                }
+            });
+
+        const reviews =
+            await prisma.review.findMany({
+                where: {
+                    courseId
+                },
+                orderBy: {
+                    createdAt: "desc"
+                },
+                skip: (page - 1) * limit,
+                take: limit,
                 select: {
                     id: true,
-                    name: true
+                    rating: true,
+                    comment: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    user: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
                 }
-            }
-        }
-    });
+            });
 
-    return res.json(reviews);
-});
+        return res.json({
+            page,
+            limit,
+            totalReviews,
+            totalPages: Math.ceil(
+                totalReviews / limit
+            ),
+            reviews
+        });
+    }
+);
 
 router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) => {
     
