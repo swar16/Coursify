@@ -42,6 +42,7 @@ A backend API for a Learning Management System (LMS) built with Express, TypeScr
 
 ### User
 - id
+- name
 - email
 - password
 - role
@@ -66,6 +67,17 @@ A backend API for a Learning Management System (LMS) built with Express, TypeScr
 |----------|------------|-------------|
 | POST | /auth/signup | Register a user |
 | POST | /auth/login | Login user |
+
+`POST /auth/signup` body:
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "password": "secret123",
+  "role": "STUDENT"
+}
+```
 
 ### Courses
 

@@ -28,13 +28,15 @@ router.post("/signup", async(req, res) => {
         data: {
             email: data.email,
             password: hashedPassword,
-            role:data.role
+            role:data.role,
+            name: data.name
         }
     })
     return res.status(201).json({
         id: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        name:user.name
     });
     
 });
@@ -77,7 +79,8 @@ router.post("/login", async(req, res) => {
         user: {
             id: user.id,
             email: user.email,
-            role: user.role
+            role: user.role,
+            name: user.name
         }
     });
 });

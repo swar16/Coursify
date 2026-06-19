@@ -1,4 +1,4 @@
-import { Request, Router } from "express";
+import { Request, Response, Router } from "express";
 const router=Router();
 import prisma from "../lib/prisma";
 import {VerifyUser, InstructorOnly, StudentOnly, OptionalAuth } from "../middleware/auth";
@@ -227,7 +227,8 @@ router.get("/", async(req, res) => {
             author: {
                 select: {
                     id: true,
-                    role: true
+                    role: true,
+                    name: true
                 }
             }
         }
@@ -306,7 +307,8 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
             author: {
                 select: {
                     id: true,
-                    role: true
+                    role: true,
+                    name: true
                 }
             },
             sections: {
@@ -438,6 +440,47 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
         progressRows.map(row => row.lectureId);
 
     return res.json(response);
+});
+
+router.get("/:id/reviews", async (req: Request, res: Response) => {
+    const courseId = parseInt(req.params.id as string);
+
+    if (isNaN(courseId)) {
+        return res.status(400).json({
+            error: "Invalid course ID"
+        });
+    }
+
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    });
+
+    if (!course) {
+        return res.status(404).json({
+            error: "Course not found"
+        });
+    }
+
+    const reviews = await prisma.review.findMany({
+        where: {
+            courseId
+        },
+        orderBy: {
+            createdAt: "desc"
+        },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
+        }
+    });
+
+    return res.json(reviews);
 });
 
 router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) => {
