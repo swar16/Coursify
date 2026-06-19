@@ -602,6 +602,79 @@ router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) =
     })
     return res.json({ message: "Course purchased successfully" });
 });
+router.delete("/:id/review", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
+    const courseId = parseInt(req.params.id as string);
+    const userId = req.user!.userId;
+    if(isNaN(courseId)){
+        return res.status(400).json({ error: "Invalid course ID" });
+    }
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    })
+    if(!course){
+        return res.status(404).json({ error: "Course not found" });
+    }
+    // const purchase = await prisma.purchase.findUnique({
+    //     where: {
+    //         userId_courseId: {
+    //             userId,
+    //             courseId
+    //         }
+    //     }
+    // })
+    // if(!purchase){
+    //     return res.status(403).json({ error: "You have not purchased this course" });
+    // }
+
+    const review = await prisma.review.findUnique({
+        where: {
+            userId_courseId: {
+                userId,
+                courseId
+            }
+        }
+    })
+    if(!review){
+        return res.status(404).json({ error: "Review not found" });
+    }
+    await prisma.$transaction(
+        async (tx) => {
+            await tx.review.delete({
+            where: {
+                userId_courseId: {
+                    userId,
+                    courseId
+                }
+            }
+            })
+            const stats = await tx.review.aggregate({
+                where: {
+                    courseId
+                },
+                _avg: {
+                    rating: true
+                },
+                _count: {
+                    rating: true
+                }
+            });
+            await tx.course.update({
+                where: {
+                    id: courseId
+                },
+                data: {
+                    averageRating: Number(
+                        (stats._avg.rating ?? 0).toFixed(2)
+                    ),
+                    reviewCount: stats._count.rating
+                }
+            });
+        }
+    );
+    return res.json({ message: "Review deleted successfully" });
+});
 
 router.patch("/:id/status",VerifyUser,InstructorOnly,async (req: AuthenticatedRequest, res) => {
         const courseId = parseInt(req.params.id as string);
