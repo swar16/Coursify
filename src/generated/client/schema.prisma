@@ -26,6 +26,8 @@ model User {
 
   lectureProgress LectureProgress[]
 
+  reviews Review[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -52,6 +54,11 @@ model Course {
 
   // sections of the course
   sections Section[]
+
+  averageRating Float @default(0)
+  reviewCount   Int   @default(0)
+
+  reviews Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -120,4 +127,22 @@ model LectureProgress {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, lectureId])
+}
+
+model Review {
+  id Int @id @default(autoincrement())
+
+  rating  Float
+  comment String?
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
 }

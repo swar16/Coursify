@@ -136,6 +136,8 @@ exports.Prisma.CourseScalarFieldEnum = {
   price: 'price',
   status: 'status',
   authorId: 'authorId',
+  averageRating: 'averageRating',
+  reviewCount: 'reviewCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -174,6 +176,16 @@ exports.Prisma.LectureProgressScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  comment: 'comment',
+  userId: 'userId',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -205,7 +217,8 @@ exports.Prisma.ModelName = {
   Purchase: 'Purchase',
   Section: 'Section',
   Lecture: 'Lecture',
-  LectureProgress: 'LectureProgress'
+  LectureProgress: 'LectureProgress',
+  Review: 'Review'
 };
 
 /**

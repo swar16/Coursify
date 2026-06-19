@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import {VerifyUser, InstructorOnly, StudentOnly, OptionalAuth } from "../middleware/auth";
 import { CourseSchema } from "../schemas/course.schema";
 import { CourseStatusSchema } from "../schemas/course-status.schema";
+import { ReviewSchema } from "../schemas/review.schema";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -72,7 +73,92 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
     })
     return res.json(updatedCourse);
 });
-
+router.put("/:id/review", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
+    const courseId = parseInt(req.params.id as string);
+    const userId = req.user!.userId;
+    if(isNaN(courseId)){
+        return res.status(400).json({ error: "Invalid course ID" });
+    }
+    const data=ReviewSchema.safeParse(req.body);
+    if(!data.success){
+        return res.status(400).json({
+            errors: data.error.issues
+        });
+    }
+    const {rating, comment}=data.data;
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    })
+    if(!course){
+        return res.status(404).json({ error: "Course not found" });
+    }
+    const purchase = await prisma.purchase.findUnique({
+        where: {
+            userId_courseId: {
+                userId: req.user!.userId,
+                courseId
+            }
+        }
+    })
+    if(!purchase){
+        return res.status(403).json({ error: "You have not purchased this course" });
+    }
+    if(course.status !== "PUBLISHED" && course.status !== "ARCHIVED"){
+        return res.status(403).json({ error: "You can only review published or archived courses" });
+    }
+    
+    const review = await prisma.$transaction(
+        async (tx) => {
+            const review = await tx.review.upsert({
+                where: {
+                    userId_courseId: {
+                        userId,
+                        courseId
+                    }
+                },
+                update: {
+                    rating,
+                    comment: comment ?? null
+                },
+                create: {
+                    userId,
+                    courseId,
+                    rating,
+                    comment: comment ?? null
+                }
+            });
+            const stats = await tx.review.aggregate({
+                where: {
+                    courseId
+                },
+                _avg: {
+                    rating: true
+                },
+                _count: {
+                    rating: true
+                }
+            });
+            await tx.course.update({
+                where: {
+                    id: courseId
+                },
+                data: {
+                    averageRating: Number(
+                        (stats._avg.rating ?? 0).toFixed(2)
+                    ),
+                    reviewCount: stats._count.rating
+                }
+            });
+            return review;
+        }
+    );
+    return res.json({
+        message: "Review saved successfully",
+        review
+    });
+});
 router.get("/", async(req, res) => {
     const whereClause: any ={status:"PUBLISHED"};
     const sort= req.query.sort as string;
