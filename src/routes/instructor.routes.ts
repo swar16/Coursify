@@ -87,6 +87,29 @@ router.get("/analytics", VerifyUser, InstructorOnly, async(req: AuthenticatedReq
             averageRating: course.averageRating,
             reviewCount: course._count.reviews
         }));   
+    const buckets = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1];
+    const ratingDistribution = await prisma.review.groupBy({
+        by: ["rating"],
+        where: {
+            course: {
+                authorId: userId
+            }
+        },
+        _count: {
+            rating: true
+        }
+    });
+    const formattedRatingDistribution = buckets.map(
+        rating => {
+            const match = ratingDistribution.find(
+                row => row.rating === rating
+            );
+            return {
+                rating,
+                count: match?._count.rating ?? 0
+            };
+        }
+    );
     res.json({
         overview: {
             totalCourses,
@@ -102,7 +125,8 @@ router.get("/analytics", VerifyUser, InstructorOnly, async(req: AuthenticatedReq
             byRevenue: topCoursesbyRevenue,
             byPurchases: topCoursesbyPurchases,
             byRating: topCoursesbyRating
-        }
+        },
+        ratingDistribution
     })
 });
 
