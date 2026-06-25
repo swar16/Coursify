@@ -21,15 +21,34 @@ router.post("/", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, re
         });
     }
     const data = result.data;
-    const course = await prisma.course.create({
-        data: {
-            title:data.title,
-            description:data.description,
-            authorId: req.user!.userId,
-            price:data.price
+    const existingCategories = await prisma.category.findMany({
+        where: {
+            id: {
+                in: data.categoryIds
+            }
         }
-    })
-    return res.status(201).json(course);
+    });
+    if (existingCategories.length !== data.categoryIds.length) {
+        return res.status(400).json({
+            error: "One or more categories do not exist"
+        });
+    }
+    const course = await prisma.course.create({
+    data: {
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        authorId: req.user!.userId,
+        categories: {
+            connect: data.categoryIds.map(id => ({
+                id
+            }))
+        }
+    }
+    });
+    return res.status(201).json({
+        course
+    });
 });
 
 router.get("/my-courses", VerifyUser,InstructorOnly, async(req: AuthenticatedRequest, res) => {
@@ -64,15 +83,40 @@ router.put("/:id", VerifyUser, InstructorOnly, async(req: AuthenticatedRequest, 
             errors: result.error.issues
         });
     }
+    const existingCategories = await prisma.category.findMany({
+        where: {
+            id: {
+                in: result.data.categoryIds 
+            }
+        }
+    });
+    if (existingCategories.length !== (result.data.categoryIds).length) {
+        return res.status(400).json({
+            error: "One or more categories do not exist"
+        });
+    }
+    
     const data=result.data;
     const updatedCourse = await prisma.course.update({
         where: {
             id: courseId
         },
-        data
+        data: {
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            categories: {
+                set: data.categoryIds.map(id => ({
+                    id
+                }))
+            }
+        }
+        
     })
     return res.json(updatedCourse);
 });
+
+
 router.put("/:id/review", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
     const courseId = parseInt(req.params.id as string);
     const userId = req.user!.userId;
@@ -186,6 +230,14 @@ router.get("/", async(req, res) => {
     }
     const minPrice = Number(req.query.minPrice);
     const maxPrice = Number(req.query.maxPrice);
+    const categoryId = Number(req.query.categoryId);
+    if (!isNaN(categoryId)) {
+        whereClause.categories = {
+            some: {
+                id: categoryId
+            }
+        };
+    }
     if (!isNaN(minPrice) || !isNaN(maxPrice)) {
         whereClause.price = {};
     }
@@ -229,6 +281,13 @@ router.get("/", async(req, res) => {
                     id: true,
                     role: true,
                     name: true
+                }
+            },
+            categories: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true
                 }
             }
         }
@@ -322,6 +381,13 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
                             createdAt: "asc"
                         }
                     }
+                }
+            }
+            ,categories: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true
                 }
             }
         }

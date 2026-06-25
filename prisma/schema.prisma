@@ -64,6 +64,8 @@ model Course{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  categories Category[]
 }
 
 model Purchase{
@@ -148,4 +150,13 @@ model Review {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, courseId])
+}
+
+model Category {
+    id Int @id @default(autoincrement())
+
+    name String @unique
+    slug String @unique
+
+    courses Course[]
 }
