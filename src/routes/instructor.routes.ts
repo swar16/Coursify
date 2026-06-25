@@ -44,7 +44,49 @@ router.get("/analytics", VerifyUser, InstructorOnly, async(req: AuthenticatedReq
           )
         : 0;
     
+    const topCoursesbyRevenue = [...courses]
+        .sort(
+            (a, b) =>
+                b._count.purchases * b.price -
+                a._count.purchases * a.price
+        )
+        .slice(0, 5)
+        .map(course => ({
+            id: course.id,
+            title: course.title,
+            revenue:
+                course._count.purchases * course.price
+        }));
 
+    const topCoursesbyPurchases = [...courses]
+        .sort(
+            (a, b) =>
+                b._count.purchases -
+                a._count.purchases
+        )
+        .slice(0, 5)
+        .map(course => ({
+            id: course.id,
+            title: course.title,
+            purchases: course._count.purchases
+        }));
+
+    const topCoursesbyRating = [...courses]
+        .filter(
+            course => course._count.reviews >= 5
+        )
+        .sort(
+            (a, b) =>
+                b.averageRating -
+                a.averageRating
+        )
+        .slice(0, 5)
+        .map(course => ({
+            id: course.id,
+            title: course.title,
+            averageRating: course.averageRating,
+            reviewCount: course._count.reviews
+        }));   
     res.json({
         overview: {
             totalCourses,
@@ -55,6 +97,11 @@ router.get("/analytics", VerifyUser, InstructorOnly, async(req: AuthenticatedReq
             totalPurchases,
             averageRating,
             totalReviews
+        },
+        topCourses: {
+            byRevenue: topCoursesbyRevenue,
+            byPurchases: topCoursesbyPurchases,
+            byRating: topCoursesbyRating
         }
     })
 });
