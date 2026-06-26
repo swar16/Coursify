@@ -507,7 +507,93 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
 
     return res.json(response);
 });
+router.get(
+    "/:id/analytics",
+    VerifyUser,
+    InstructorOnly,
+    async (req: AuthenticatedRequest, res) => {
+        const courseId = parseInt(req.params.id as string);
+        const userId = req.user!.userId;
 
+        if (isNaN(courseId)) {
+            return res.status(400).json({
+                error: "Invalid course ID"
+            });
+        }
+
+        const course = await prisma.course.findUnique({
+            where: {
+                id: courseId
+            }
+        });
+
+        if (!course) {
+            return res.status(404).json({
+                error: "Course not found"
+            });
+        }
+
+        if (course.authorId !== userId) {
+            return res.status(403).json({
+                error: "You are not the author of this course"
+            });
+        }
+
+        const totalPurchases = await prisma.purchase.count({
+            where: {
+                courseId
+            }
+        });
+
+        const totalRevenue =
+            Number((totalPurchases * course.price).toFixed(2));
+
+        const totalLectures = await prisma.lecture.count({
+            where: {
+                section: {
+                    courseId
+                }
+            }
+        });
+
+        const ratingDistributionRows =
+            await prisma.review.groupBy({
+                by: ["rating"],
+                where: {
+                    courseId
+                },
+                _count: {
+                    rating: true
+                },
+                orderBy: {
+                    rating: "desc"
+                }
+            });
+
+        const ratingDistribution =
+            ratingDistributionRows.map(row => ({
+                rating: row.rating,
+                count: row._count.rating
+            }));
+
+        return res.json({
+            courseId: course.id,
+            courseTitle: course.title,
+
+            totalPurchases,
+
+            totalRevenue,
+
+            averageRating: course.averageRating,
+
+            totalReviews: course.reviewCount,
+
+            totalLectures,
+
+            ratingDistribution
+        });
+    }
+);
 router.get("/:id/reviews",OptionalAuth,async (req: AuthenticatedRequest, res: Response) => {
         const courseId = parseInt(req.params.id as string);
         const userId = req.user?.userId;

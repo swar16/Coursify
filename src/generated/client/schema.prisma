@@ -73,11 +73,11 @@ model Purchase {
   id Int @id @default(autoincrement())
 
   // user who made the purchase
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
   // course that was purchased
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId Int
 
   createdAt DateTime @default(now())
@@ -142,10 +142,10 @@ model Review {
   rating  Float
   comment String?
 
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId Int
 
   createdAt DateTime @default(now())
@@ -166,7 +166,7 @@ model Category {
 model Discussion {
   id Int @id @default(autoincrement())
 
-  lecture   Lecture @relation(fields: [lectureId], references: [id])
+  lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
   lectureId Int
 
   user   User @relation(fields: [userId], references: [id])
@@ -174,7 +174,7 @@ model Discussion {
 
   parentId Int?
 
-  parent Discussion? @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: NoAction)
+  parent Discussion? @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
 
   replies Discussion[] @relation("DiscussionReplies")
 
