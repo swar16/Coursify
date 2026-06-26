@@ -348,165 +348,7 @@ router.delete("/:id",VerifyUser, InstructorOnly, async(req: AuthenticatedRequest
 
 })
 
-router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
-    const userId = req.user?.userId;
-    const courseId = parseInt(req.params.id as string );
 
-    if (isNaN(courseId)) {
-        return res.status(400).json({
-            error: "Invalid course ID"
-        });
-    }
-
-    const course = await prisma.course.findUnique({
-        where: {
-            id: courseId
-        },
-        include: {
-            author: {
-                select: {
-                    id: true,
-                    role: true,
-                    name: true
-                }
-            },
-            sections: {
-                include: {
-                    lectures: {
-                        select: {
-                            id: true,
-                            title: true
-                        },
-                        orderBy: {
-                            createdAt: "asc"
-                        }
-                    }
-                }
-            }
-            ,categories: {
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true
-                }
-            }
-        }
-    });
-
-    if (!course) {
-        return res.status(404).json({
-            error: "Course not found"
-        });
-    }
-
-    const response = {
-        course,
-        hasPurchased: false,
-        progress: null as null | {
-            totalLectures: number;
-            completedLectures: number;
-            progressPercentage: number;
-        },
-        completedLectureIdList: [] as number[]
-    };
-
-    const isAuthor = userId === course.authorId;
-
-    let purchase = null;
-
-    if (userId) {
-        purchase = await prisma.purchase.findUnique({
-            where: {
-                userId_courseId: {
-                    userId,
-                    courseId
-                }
-            }
-        });
-    }
-
-    const hasPurchased = !!purchase;
-
-    // Visibility Rules
-    switch (course.status) {
-        case "DRAFT":
-            if (!isAuthor) {
-                return res.status(403).json({
-                    error: "You're not authorized to access this course"
-                });
-            }
-            break;
-
-        case "ARCHIVED":
-            if (!isAuthor && !hasPurchased) {
-                return res.status(403).json({
-                    error: "You're not authorized to access this course"
-                });
-            }
-            break;
-
-        case "PUBLISHED":
-            break;
-    }
-
-    if (!userId) {
-        return res.json(response);
-    }
-
-    if (!hasPurchased && !isAuthor) {
-        return res.json(response);
-    }
-
-    const totalLectures = course.sections.reduce(
-        (acc, section) => acc + section.lectures.length,
-        0
-    );
-
-    const [completedLectures, progressRows] = await Promise.all([
-        prisma.lectureProgress.count({
-            where: {
-                userId,
-                completed: true,
-                lecture: {
-                    section: {
-                        courseId
-                    }
-                }
-            }
-        }),
-
-        prisma.lectureProgress.findMany({
-            where: {
-                userId,
-                completed: true,
-                lecture: {
-                    section: {
-                        courseId
-                    }
-                }
-            },
-            select: {
-                lectureId: true
-            }
-        })
-    ]);
-
-    response.hasPurchased = hasPurchased;
-
-    response.progress = {
-        totalLectures,
-        completedLectures,
-        progressPercentage:
-            totalLectures > 0
-                ? (completedLectures / totalLectures) * 100
-                : 0
-    };
-
-    response.completedLectureIdList =
-        progressRows.map(row => row.lectureId);
-
-    return res.json(response);
-});
 router.get(
     "/:id/analytics",
     VerifyUser,
@@ -575,6 +417,41 @@ router.get(
                 rating: row.rating,
                 count: row._count.rating
             }));
+            
+        const progress =
+        await prisma.lectureProgress.groupBy({
+            by: ["userId"],
+            where: {
+                lecture: {
+                    section: {
+                        courseId
+                    }
+                },
+                completed: true
+            },
+            _count: {
+                lectureId: true
+            }
+        });
+        const completedStudents =
+
+            progress.filter(
+
+                p =>
+
+                    p._count.lectureId === totalLectures
+
+            ).length;
+            const completionRate =
+        totalPurchases > 0
+            ? Number(
+                (
+                    completedStudents /
+                    totalPurchases *
+                    100
+                ).toFixed(2)
+            )
+            : 0;
 
         return res.json({
             courseId: course.id,
@@ -590,7 +467,9 @@ router.get(
 
             totalLectures,
 
-            ratingDistribution
+            ratingDistribution,completedStudents,
+
+            completionRate
         });
     }
 );
@@ -977,4 +856,164 @@ router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: Authenticate
     })
     return res.status(201).json(section);
 });    
+
+router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
+    const userId = req.user?.userId;
+    const courseId = parseInt(req.params.id as string );
+
+    if (isNaN(courseId)) {
+        return res.status(400).json({
+            error: "Invalid course ID"
+        });
+    }
+
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    role: true,
+                    name: true
+                }
+            },
+            sections: {
+                include: {
+                    lectures: {
+                        select: {
+                            id: true,
+                            title: true
+                        },
+                        orderBy: {
+                            createdAt: "asc"
+                        }
+                    }
+                }
+            }
+            ,categories: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true
+                }
+            }
+        }
+    });
+
+    if (!course) {
+        return res.status(404).json({
+            error: "Course not found"
+        });
+    }
+
+    const response = {
+        course,
+        hasPurchased: false,
+        progress: null as null | {
+            totalLectures: number;
+            completedLectures: number;
+            progressPercentage: number;
+        },
+        completedLectureIdList: [] as number[]
+    };
+
+    const isAuthor = userId === course.authorId;
+
+    let purchase = null;
+
+    if (userId) {
+        purchase = await prisma.purchase.findUnique({
+            where: {
+                userId_courseId: {
+                    userId,
+                    courseId
+                }
+            }
+        });
+    }
+
+    const hasPurchased = !!purchase;
+
+    // Visibility Rules
+    switch (course.status) {
+        case "DRAFT":
+            if (!isAuthor) {
+                return res.status(403).json({
+                    error: "You're not authorized to access this course"
+                });
+            }
+            break;
+
+        case "ARCHIVED":
+            if (!isAuthor && !hasPurchased) {
+                return res.status(403).json({
+                    error: "You're not authorized to access this course"
+                });
+            }
+            break;
+
+        case "PUBLISHED":
+            break;
+    }
+
+    if (!userId) {
+        return res.json(response);
+    }
+
+    if (!hasPurchased && !isAuthor) {
+        return res.json(response);
+    }
+
+    const totalLectures = course.sections.reduce(
+        (acc, section) => acc + section.lectures.length,
+        0
+    );
+
+    const [completedLectures, progressRows] = await Promise.all([
+        prisma.lectureProgress.count({
+            where: {
+                userId,
+                completed: true,
+                lecture: {
+                    section: {
+                        courseId
+                    }
+                }
+            }
+        }),
+
+        prisma.lectureProgress.findMany({
+            where: {
+                userId,
+                completed: true,
+                lecture: {
+                    section: {
+                        courseId
+                    }
+                }
+            },
+            select: {
+                lectureId: true
+            }
+        })
+    ]);
+
+    response.hasPurchased = hasPurchased;
+
+    response.progress = {
+        totalLectures,
+        completedLectures,
+        progressPercentage:
+            totalLectures > 0
+                ? (completedLectures / totalLectures) * 100
+                : 0
+    };
+
+    response.completedLectureIdList =
+        progressRows.map(row => row.lectureId);
+
+    return res.json(response);
+});
 export default router;
