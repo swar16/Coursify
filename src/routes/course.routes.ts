@@ -417,7 +417,7 @@ router.get(
                 rating: row.rating,
                 count: row._count.rating
             }));
-            
+
         const progress =
         await prisma.lectureProgress.groupBy({
             by: ["userId"],
@@ -857,6 +857,117 @@ router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: Authenticate
     return res.status(201).json(section);
 });    
 
+
+router.get("/:id/certificate", VerifyUser, async (req: AuthenticatedRequest, res) => {
+    const courseId = parseInt(req.params.id as string);
+    const userId = req.user!.userId;
+
+    if (isNaN(courseId)) {
+        return res.status(400).json({
+            error: "Invalid course ID"
+        });
+    }
+
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    });
+
+    if (!course) {
+        return res.status(404).json({
+            error: "Course not found"
+        });
+    }
+
+    const purchase = await prisma.purchase.findUnique({
+        where: {
+            userId_courseId: {
+                userId,
+                courseId
+            }
+        }
+    });
+
+    if (!purchase) {
+        return res.status(403).json({
+            error: "You have not purchased this course"
+        });
+    }
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            name: true
+        }
+    });
+    if (!user) {
+        return res.status(404).json({
+            error: "User not found"
+        });
+    }
+
+    const totalLectures = await prisma.lecture.count({
+        where: {
+            section: {
+                courseId
+            }
+        }
+    });
+
+    const completedLectures = await prisma.lectureProgress.count({
+        where: {
+            userId,
+            completed: true,
+            lecture: {
+                section: {
+                    courseId
+                }
+            }
+        }
+    });
+
+    const eligible =
+
+    totalLectures > 0 &&
+
+    completedLectures === totalLectures;
+
+    if (!eligible) {
+        return res.status(200).json({
+            
+        "eligible": false,
+        "message": "Course not completed"
+        });
+        
+    }
+    const latestProgress =
+    await prisma.lectureProgress.findFirst({
+        where: {
+            userId,
+            completed: true,
+            lecture: {
+                section: {
+                    courseId
+                }
+            }
+        },
+        orderBy: {
+            completedAt: "desc"
+        }
+    });
+    return res.json({
+        
+        "eligible": true,
+        "courseId": courseId,
+        "courseTitle": course.title,
+        "studentName": user!.name,
+        "completedAt": latestProgress?.completedAt
+        
+    });
+});
+
 router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
     const userId = req.user?.userId;
     const courseId = parseInt(req.params.id as string );
@@ -1016,4 +1127,6 @@ router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
 
     return res.json(response);
 });
+
+
 export default router;
