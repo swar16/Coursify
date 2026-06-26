@@ -193,6 +193,16 @@ exports.Prisma.CategoryScalarFieldEnum = {
   slug: 'slug'
 };
 
+exports.Prisma.DiscussionScalarFieldEnum = {
+  id: 'id',
+  lectureId: 'lectureId',
+  userId: 'userId',
+  parentId: 'parentId',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -226,7 +236,8 @@ exports.Prisma.ModelName = {
   Lecture: 'Lecture',
   LectureProgress: 'LectureProgress',
   Review: 'Review',
-  Category: 'Category'
+  Category: 'Category',
+  Discussion: 'Discussion'
 };
 
 /**
