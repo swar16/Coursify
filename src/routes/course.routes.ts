@@ -5,6 +5,8 @@ import {VerifyUser, InstructorOnly, StudentOnly, OptionalAuth } from "../middlew
 import { CourseSchema } from "../schemas/course.schema";
 import { CourseStatusSchema } from "../schemas/course-status.schema";
 import { ReviewSchema } from "../schemas/review.schema";
+import PDFDocument from "pdfkit";
+import { getCertificateData } from "../utils/certificate";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -434,14 +436,12 @@ router.get(
             }
         });
         const completedStudents =
-
-            progress.filter(
-
+        totalLectures > 0
+            ? progress.filter(
                 p =>
-
                     p._count.lectureId === totalLectures
-
-            ).length;
+            ).length
+            : 0;
             const completionRate =
         totalPurchases > 0
             ? Number(
@@ -471,6 +471,180 @@ router.get(
 
             completionRate
         });
+    }
+);
+router.get(
+    "/:id/certificate/pdf",
+    VerifyUser,
+    async (
+        req: AuthenticatedRequest,
+        res
+    ) => {
+        const courseId = parseInt(
+            req.params.id as string
+        );
+
+        const userId =
+            req.user!.userId;
+
+        if (isNaN(courseId)) {
+            return res.status(400).json({
+                error: "Invalid course ID"
+            });
+        }
+
+        try {
+            const certificateData =
+                await getCertificateData(
+                    userId,
+                    courseId
+                );
+
+            if (
+                !certificateData.eligible
+            ) {
+                return res.status(403).json({
+                    error:
+                        "Course not completed"
+                });
+            }
+
+            const doc =
+                new PDFDocument({
+                    size: "A4",
+                    margin: 50
+                });
+
+            res.setHeader(
+                "Content-Type",
+                "application/pdf"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="certificate-${courseId}.pdf"`
+            );
+
+            doc.pipe(res);
+
+            doc.fontSize(28);
+            doc.text(
+                "CERTIFICATE OF COMPLETION",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown(2);
+
+            doc.fontSize(16);
+            doc.text(
+                "This certifies that",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown();
+
+            doc.fontSize(24);
+            doc.text(
+                certificateData.user.name,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown();
+
+            doc.fontSize(16);
+            doc.text(
+                "has successfully completed",
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown();
+
+            doc.fontSize(22);
+            doc.text(
+                certificateData.course
+                    .title,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown(2);
+
+            doc.fontSize(14);
+
+            doc.text(
+                `Completion Date: ${
+                    certificateData.completedAt
+                        ?.toDateString() ??
+                    "N/A"
+                }`,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.moveDown(4);
+
+            doc.fontSize(12);
+
+            doc.text(
+                `Certificate ID: LMS-${courseId}-${userId}`,
+                {
+                    align: "center"
+                }
+            );
+
+            doc.end();
+        } catch (error) {
+            if (
+                error instanceof Error &&
+                error.message ===
+                    "COURSE_NOT_FOUND"
+            ) {
+                return res
+                    .status(404)
+                    .json({
+                        error:
+                            "Course not found"
+                    });
+            }
+
+            if (
+                error instanceof Error &&
+                error.message ===
+                    "NOT_PURCHASED"
+            ) {
+                return res
+                    .status(403)
+                    .json({
+                        error:
+                            "You have not purchased this course"
+                    });
+            }
+
+            if (
+                error instanceof Error &&
+                error.message ===
+                    "USER_NOT_FOUND"
+            ) {
+                return res
+                    .status(404)
+                    .json({
+                        error:
+                            "User not found"
+                    });
+            }
+
+            throw error;
+        }
     }
 );
 router.get("/:id/reviews",OptionalAuth,async (req: AuthenticatedRequest, res: Response) => {
@@ -633,6 +807,7 @@ router.post("/:id/purchase", VerifyUser, async(req: AuthenticatedRequest, res) =
     })
     return res.json({ message: "Course purchased successfully" });
 });
+
 router.delete("/:id/review", VerifyUser, StudentOnly, async(req: AuthenticatedRequest, res) => {
     const courseId = parseInt(req.params.id as string);
     const userId = req.user!.userId;
@@ -861,111 +1036,56 @@ router.post("/:id/sections", VerifyUser, InstructorOnly, async(req: Authenticate
 router.get("/:id/certificate", VerifyUser, async (req: AuthenticatedRequest, res) => {
     const courseId = parseInt(req.params.id as string);
     const userId = req.user!.userId;
-
     if (isNaN(courseId)) {
         return res.status(400).json({
             error: "Invalid course ID"
         });
     }
-
-    const course = await prisma.course.findUnique({
-        where: {
-            id: courseId
-        }
-    });
-
-    if (!course) {
-        return res.status(404).json({
-            error: "Course not found"
-        });
-    }
-
-    const purchase = await prisma.purchase.findUnique({
-        where: {
-            userId_courseId: {
+    try {
+        const certificateData =
+            await getCertificateData(
                 userId,
                 courseId
-            }
+            );
+        if (!certificateData.eligible) {
+            return res.status(200).json({
+                eligible: false,
+                message: "Course not completed"
+            });
         }
-    });
-
-    if (!purchase) {
-        return res.status(403).json({
-            error: "You have not purchased this course"
+        return res.json({
+            eligible: true,
+            courseId:
+                certificateData.course.id,
+            courseTitle:
+                certificateData.course.title,
+            studentName:
+                certificateData.user?.name,
+            completedAt:
+                certificateData.completedAt
         });
+    } catch (error) {
+        if (
+            error instanceof Error &&
+            error.message ===
+                "COURSE_NOT_FOUND"
+        ) {
+            return res.status(404).json({
+                error: "Course not found"
+            });
+        }
+        if (
+            error instanceof Error &&
+            error.message ===
+                "NOT_PURCHASED"
+        ) {
+            return res.status(403).json({
+                error:
+                    "You have not purchased this course"
+            });
+        }
+        throw error;
     }
-    const user = await prisma.user.findUnique({
-        where: {
-            id: userId
-        },
-        select: {
-            name: true
-        }
-    });
-    if (!user) {
-        return res.status(404).json({
-            error: "User not found"
-        });
-    }
-
-    const totalLectures = await prisma.lecture.count({
-        where: {
-            section: {
-                courseId
-            }
-        }
-    });
-
-    const completedLectures = await prisma.lectureProgress.count({
-        where: {
-            userId,
-            completed: true,
-            lecture: {
-                section: {
-                    courseId
-                }
-            }
-        }
-    });
-
-    const eligible =
-
-    totalLectures > 0 &&
-
-    completedLectures === totalLectures;
-
-    if (!eligible) {
-        return res.status(200).json({
-            
-        "eligible": false,
-        "message": "Course not completed"
-        });
-        
-    }
-    const latestProgress =
-    await prisma.lectureProgress.findFirst({
-        where: {
-            userId,
-            completed: true,
-            lecture: {
-                section: {
-                    courseId
-                }
-            }
-        },
-        orderBy: {
-            completedAt: "desc"
-        }
-    });
-    return res.json({
-        
-        "eligible": true,
-        "courseId": courseId,
-        "courseTitle": course.title,
-        "studentName": user!.name,
-        "completedAt": latestProgress?.completedAt
-        
-    });
 });
 
 router.get("/:id", OptionalAuth, async (req: AuthenticatedRequest, res) => {
