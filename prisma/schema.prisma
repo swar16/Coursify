@@ -32,6 +32,8 @@ model User{
 
   discussions Discussion[]
 
+  payments Payment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -63,6 +65,8 @@ model Course{
   reviewCount Int @default(0)
 
   reviews Review[]
+
+  payments Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -184,4 +188,32 @@ model Discussion {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Payment {
+  id Int @id @default(autoincrement())
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  course Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  amount Float
+
+  status PaymentStatus @default(PENDING)
+
+  razorpayOrderId String? @unique
+
+  razorpayPaymentId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  completedAt DateTime?
 }

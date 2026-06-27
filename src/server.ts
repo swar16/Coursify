@@ -6,6 +6,7 @@ import sectionRouter from "./routes/section.routes"
 import lectureRouter from "./routes/lecture.routes"
 import categoryRouter from "./routes/category.routes"
 import instructorRouter from "./routes/instructor.routes"
+import paymentRouter from "./routes/payment.routes"
 const app = express();
 
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use("/sections", sectionRouter);
 app.use("/lectures", lectureRouter);
 app.use("/categories", categoryRouter);
 app.use("/instructor", instructorRouter);
+app.use("/payment", paymentRouter);
 
 app.listen(3000, () => {
     console.log("Server is running on port 3000");

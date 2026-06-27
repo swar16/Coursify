@@ -647,6 +647,62 @@ router.get(
         }
     }
 );
+
+router.post("/:id/create-order", VerifyUser, async (req: AuthenticatedRequest, res) => {
+    const courseId = parseInt(req.params.id as string);
+    const userId = req.user!.userId;
+
+    if (isNaN(courseId)) {
+        return res.status(400).json({
+            error: "Invalid course ID"
+        });
+    }
+
+    const course = await prisma.course.findUnique({
+        where: { id: courseId }
+    });
+
+    if (!course) {
+        return res.status(404).json({
+            error: "Course not found"
+        });
+    }
+
+    if (course.status !== "PUBLISHED") {
+        return res.status(409).json({
+            error: "Course is not published"
+        });
+    }
+
+    const existingPurchase = await prisma.purchase.findUnique({
+        where: {
+            userId_courseId: {
+                userId,
+                courseId
+            }
+        }
+    });
+
+    if (existingPurchase) {
+        return res.status(400).json({
+            error: "You have already purchased this course"
+        });
+    }
+    const payment = await prisma.payment.create({
+        data: {
+            userId,
+            courseId,
+            amount: course.price,
+            status: "PENDING"
+        }
+    });
+    return res.status(201).json({
+        paymentId: payment.id,
+        amount: payment.amount,
+        status: payment.status
+    });
+});
+
 router.get("/:id/reviews",OptionalAuth,async (req: AuthenticatedRequest, res: Response) => {
         const courseId = parseInt(req.params.id as string);
         const userId = req.user?.userId;

@@ -203,6 +203,18 @@ exports.Prisma.DiscussionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  courseId: 'courseId',
+  amount: 'amount',
+  status: 'status',
+  razorpayOrderId: 'razorpayOrderId',
+  razorpayPaymentId: 'razorpayPaymentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -228,6 +240,12 @@ exports.CourseStatus = exports.$Enums.CourseStatus = {
   ARCHIVED: 'ARCHIVED'
 };
 
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Course: 'Course',
@@ -237,7 +255,8 @@ exports.Prisma.ModelName = {
   LectureProgress: 'LectureProgress',
   Review: 'Review',
   Category: 'Category',
-  Discussion: 'Discussion'
+  Discussion: 'Discussion',
+  Payment: 'Payment'
 };
 
 /**
