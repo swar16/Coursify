@@ -7,6 +7,7 @@ import { CourseStatusSchema } from "../schemas/course-status.schema";
 import { ReviewSchema } from "../schemas/review.schema";
 import PDFDocument from "pdfkit";
 import { getCertificateData } from "../utils/certificate";
+import razorpay from "../lib/razorpay";
 type AuthenticatedRequest = Request & {
     user?: {
         userId: number;
@@ -647,61 +648,135 @@ router.get(
         }
     }
 );
+router.post("/:id/create-order",VerifyUser,StudentOnly,async (req: AuthenticatedRequest,res) => {
+        const courseId = parseInt(
+            req.params.id as string
+        );
 
-router.post("/:id/create-order", VerifyUser, async (req: AuthenticatedRequest, res) => {
-    const courseId = parseInt(req.params.id as string);
-    const userId = req.user!.userId;
+        const userId =
+            req.user!.userId;
 
-    if (isNaN(courseId)) {
-        return res.status(400).json({
-            error: "Invalid course ID"
-        });
-    }
-
-    const course = await prisma.course.findUnique({
-        where: { id: courseId }
-    });
-
-    if (!course) {
-        return res.status(404).json({
-            error: "Course not found"
-        });
-    }
-
-    if (course.status !== "PUBLISHED") {
-        return res.status(409).json({
-            error: "Course is not published"
-        });
-    }
-
-    const existingPurchase = await prisma.purchase.findUnique({
-        where: {
-            userId_courseId: {
-                userId,
-                courseId
-            }
+        if (isNaN(courseId)) {
+            return res.status(400).json({
+                error: "Invalid course ID"
+            });
         }
-    });
 
-    if (existingPurchase) {
-        return res.status(400).json({
-            error: "You have already purchased this course"
-        });
-    }
-    const payment = await prisma.payment.create({
-        data: {
-            userId,
-            courseId,
-            amount: course.price,
-            status: "PENDING"
+        const course =
+            await prisma.course.findUnique({
+                where: {
+                    id: courseId
+                }
+            });
+
+        if (!course) {
+            return res.status(404).json({
+                error: "Course not found"
+            });
         }
-    });
-    return res.status(201).json({
-        paymentId: payment.id,
-        amount: payment.amount,
-        status: payment.status
-    });
-});
+
+        if (
+            course.status !==
+            "PUBLISHED"
+        ) {
+            return res.status(409).json({
+                error:
+                    "Course is not published"
+            });
+        }
+
+        const existingPurchase =
+            await prisma.purchase.findUnique({
+                where: {
+                    userId_courseId: {
+                        userId,
+                        courseId
+                    }
+                }
+            });
+
+        if (existingPurchase) {
+            return res.status(400).json({
+                error:
+                    "You have already purchased this course"
+            });
+        }
+
+        const existingPendingPayment =
+            await prisma.payment.findFirst({
+                where: {
+                    userId,
+                    courseId,
+                    status: "PENDING"
+                }
+            });
+
+        if (existingPendingPayment) {
+            return res.status(409).json({
+                error:
+                    "A pending payment already exists for this course"
+            });
+        }
+
+        const payment =
+            await prisma.payment.create({
+                data: {
+                    userId,
+                    courseId,
+                    amount: course.price,
+                    status: "PENDING"
+                }
+            });
+
+        try {
+            const razorpayOrder =
+                await razorpay.orders.create({
+                    amount: Math.round(
+                        course.price * 100
+                    ),
+                    currency: "INR",
+                    receipt: `payment_${payment.id}`
+                });
+
+            await prisma.payment.update({
+                where: {
+                    id: payment.id
+                },
+                data: {
+                    razorpayOrderId:
+                        razorpayOrder.id
+                }
+            });
+
+            return res.status(201).json({
+                paymentId:
+                    payment.id,
+                razorpayOrderId:
+                    razorpayOrder.id,
+                amount:
+                    razorpayOrder.amount,
+                currency:
+                    razorpayOrder.currency,
+                key:
+                    process.env
+                        .RAZORPAY_KEY_ID
+            });
+        } catch (error) {
+            await prisma.payment.delete({
+                where: {
+                    id: payment.id
+                }
+            });
+
+            console.error(error);
+
+            return res.status(500).json({
+                error:
+                    "Failed to create Razorpay order"
+            });
+        }
+    }
+);
 
 router.get("/:id/reviews",OptionalAuth,async (req: AuthenticatedRequest, res: Response) => {
         const courseId = parseInt(req.params.id as string);
